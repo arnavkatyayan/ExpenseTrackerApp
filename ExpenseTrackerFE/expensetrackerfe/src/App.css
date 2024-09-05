@@ -1,0 +1,112 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.expense-tracker {
+  height:100vh;
+  background-color:lightcyan;
+  display: flex; /* Enables flexbox layout */
+  align-items: center;
+  justify-content: center; 
+}
+.login-page {
+  height: 50vh; /* 30% of the viewport height */
+  width: 30vw; /* Adjust width as needed */
+  background-color: rgb(152, 92, 13); /* Background color */
+  display: flex; /* Enables flexbox layout */
+  align-items: center; /* Vertically centers content inside */
+  justify-content: center; /* Horizontally centers content inside */
+}
+.labels {
+  font-weight: 700;
+}
+.btn-grps {
+  display: flex;
+  gap:20px;
+  margin-top: 10px;
+}
+.new-user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+.click-btn {
+  text-decoration: underline; /* Underlines the text */
+  color: black; /* Initial color */
+  cursor: pointer; /* Changes the cursor to a pointer on hover */
+  padding-left:5px;
+}
+
+.click-btn:hover {
+  color: red; /* Changes the color to blue on hover */
+}
+.input-container {
+  width: 100%;
+}
+
+.input-field {
+  width: 100%; /* Ensures both fields have the same width */
+  padding-right: 40px; /* Space for the icon inside the password input */
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 40px; /* Space for the icon */
+}
+
+
+
+
+
+
+
