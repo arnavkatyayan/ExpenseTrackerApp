@@ -1,7 +1,7 @@
 import React from "react";
-import {useState} from "react";
+import { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button, Form} from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import hide from './hide.png';
 import view from './view.png';
 import hideConfirmPass from './hide.png';
@@ -21,7 +21,9 @@ function SignUpPage() {
     const [errPassword, setErrPassword] = useState(false);
     const [errConfirmPassword, setErrConfirmPassword] = useState(false);
     const [errEmail, setErrEmail] = useState(false);
-
+    const warningMessages = ["The username maximum length should be 10", "Invalid email format"];
+    const [errUsernameLen, setErrUserNameLen] = useState(false);
+    const [invalidEmail, setInvalidEmail] = useState(false);
     const handleUsername = (evt) => {
         setUserName(evt.target.value);
     }
@@ -46,7 +48,27 @@ function SignUpPage() {
         setIsIconClickedConfirmPassword(!isIconClickedConfirmPassWord);
     }
 
+    const isEmailValid = (mail) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (emailRegex.test(mail)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
     const checkValidations = () => {
+
+        if (userName && userName.trim().length > 10) {
+
+            setErrUserNameLen(true);
+        }
+        if (email && !isEmailValid(email.trim())) {
+            setInvalidEmail(true);
+        }
+
         if (userName.trim().length === 0) {
             setErrUsername(true);
         }
@@ -72,39 +94,41 @@ function SignUpPage() {
         setIsIconClickedConfirmPassword(false);
         setEmail("");
         setConfirmPassword("");
+        setInvalidEmail(false);
+        setErrUserNameLen(false);
     }
 
     const handleSubmit = () => {
         checkValidations();
         let isMismatch = checkBothPasswords();
-        if(isMismatch) {
+        if (isMismatch) {
             passMismatch();
         }
 
         const signUpData = {
-            username:userName,
-            password:password,
-            email:email
+            username: userName,
+            password: password,
+            email: email
         }
         axios.post("http://localhost:9090/api-signup/signup", signUpData)
-        .then(response => {
-            // Handle success, e.g., navigate to another page or show success message
-            console.log("Login successful:", response.data);
-            swal("Success!", "signup completed.", "success");
-        })
-        .catch(error => {
-            // Handle error, e.g., show error message
-            swal("Error!", "signup failed.", "warning");
-            console.error("Error logging in:", error);
-        });
+            .then(response => {
+                // Handle success, e.g., navigate to another page or show success message
+                console.log("Login Successful:", response.data);
+                swal("Success!", "signup completed.", "success");
+            })
+            .catch(error => {
+                // Handle error, e.g., show error message
+                swal("Error!", "Signup Failed.", "warning");
+                console.error("Error logging in:", error);
+            });
     }
-    
+
     const showPassValidations = () => {
         swal({
             title: "Password Validations",
             text: "1. The password must be at least 8 characters long.\n" +
-                  "2. The password should have 1 lowercase letter, 1 uppercase letter, 1 number, and 1 special symbol.\n"+
-                  "3. The password maximum length should be 15",
+                "2. The password should have 1 lowercase letter, 1 uppercase letter, 1 number, and 1 special symbol.\n" +
+                "3. The password's maximum length should be 15",
             icon: "info",
             button: {
                 text: "OK",
@@ -140,7 +164,7 @@ function SignUpPage() {
             copyPassword(pass);
         });
     }
-    
+
     // Function to copy the password to the clipboard
     const copyPassword = (pass) => {
         navigator.clipboard.writeText(pass).then(() => {
@@ -149,7 +173,7 @@ function SignUpPage() {
             console.error('Failed to copy the password: ', err);
         });
     }
-    
+
 
     const getFirstFourChars = (l, u, n, s) => {
         // Step 1: Select one random character from each input string (lower, upper, number, special)
@@ -159,18 +183,18 @@ function SignUpPage() {
             n[Math.floor(Math.random() * n.length)],  // Random number
             s[Math.floor(Math.random() * s.length)]   // Random special character
         ];
-    
+
         // Step 2: Shuffle the array to randomize the order of the characters
         const shuffledChars = selectedChars.sort(() => 0.5 - Math.random());
-    
+
         // Step 3: Join the array into a string and return it
         return shuffledChars.join('');
     };
 
     const checkBothPasswords = () => {
         let isSame = false;
-        if(password && confirmPassword) {
-            if(password.trim() != confirmPassword.trim()) {
+        if (password && confirmPassword) {
+            if (password.trim() != confirmPassword.trim()) {
                 isSame = true;
             }
         }
@@ -178,16 +202,16 @@ function SignUpPage() {
     }
 
     const generatePassword = () => {
-        let passLength = getPasswordLength(8,15);
+        let passLength = getPasswordLength(8, 15);
         let pass = "";
         const lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz'; // Lowercase letters
         const upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // Uppercase letters
         const numberChars = '0123456789'; // Digits
         const specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?'; // Special symbols
-        const allChars = lowerCaseChars+upperCaseChars+numberChars+specialChars;
-        pass = pass+getFirstFourChars(lowerCaseChars,upperCaseChars,numberChars,specialChars);
-        for(let i=0;i<passLength-4;i++) {
-            pass = pass+allChars[Math.floor(Math.random()*allChars.length)];
+        const allChars = lowerCaseChars + upperCaseChars + numberChars + specialChars;
+        pass = pass + getFirstFourChars(lowerCaseChars, upperCaseChars, numberChars, specialChars);
+        for (let i = 0; i < passLength - 4; i++) {
+            pass = pass + allChars[Math.floor(Math.random() * allChars.length)];
         }
         return pass;
 
@@ -197,25 +221,20 @@ function SignUpPage() {
         // Ensure min and max are integers
         min = Math.ceil(min);
         max = Math.floor(max);
-        
+
         // Generate a random number between min (inclusive) and max (inclusive)
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    
-    
-    
+
+
+
 
     return (
 
         <div className="expense-tracker">
             <div className="login-page signup-page">
-                {/* <ul className="pass-validations">
-                    <h5>Password Requirements</h5>
-                 <li>The password must be at least 8 characters long</li>
-                 <li> The pasword should have 1 lowercase letter,1 uppercase letter,1 number, 1 special-symbol.</li>
-                </ul> */}
                 <div className="sign-up-inputs">
-                <Form.Group className="mb-3 input-container" controlId="formBasicEmail">
+                    <Form.Group className="mb-3 input-container" controlId="formBasicEmail">
                         <Form.Label className="labels">Username</Form.Label>
                         <Form.Control
                             className="input-field"
@@ -225,6 +244,7 @@ function SignUpPage() {
                             value={userName}
                         />
                         {errUsername ? <p className="validation-warning">Please enter the username</p> : null}
+                        {errUsernameLen ? <p className="validation-warning">{warningMessages[0]}</p> : null}
                     </Form.Group>
 
                     <Form.Group className="mb-3 input-container" controlId="formBasicEmail">
@@ -237,6 +257,7 @@ function SignUpPage() {
                             value={email}
                         />
                         {errEmail ? <p className="validation-warning">Please enter the Email</p> : null}
+                        {invalidEmail ? <p className="validation-warning">{warningMessages[1]}</p> : null}
                     </Form.Group>
 
                     {/* Password field with icon inside */}
@@ -284,9 +305,9 @@ function SignUpPage() {
                             Generate Password
                         </Button>
                     </div>
+                </div>
+
             </div>
-           
-                                </div>
         </div>
     )
 
