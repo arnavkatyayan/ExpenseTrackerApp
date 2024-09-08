@@ -1,7 +1,10 @@
 package com.example.ExpenseTracker.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +14,7 @@ import com.example.ExpenseTracker.Entity.SignupEntity;
 import com.example.ExpenseTracker.Request.SignUpRequest;
 import com.example.ExpenseTracker.Services.SignUpService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 @RestController
 @RequestMapping("/api-signup")
 public class SignUp {
@@ -23,4 +26,19 @@ public class SignUp {
     public SignupEntity signUp(@RequestBody SignUpRequest signupRequest) {
         return signupservice.saveUser(signupRequest);
     }
+    
+    @PostMapping("/signup/{username}")
+    public ResponseEntity<String> isUserPresent(@PathVariable String username) {
+    	
+    	Boolean userExists = signupservice.isUserPresentInDB(username);
+    	
+    	 if (userExists) {
+             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+         } else {
+             return ResponseEntity.status(HttpStatus.OK).body("User is available");
+         }
+    	
+    }
+
+	
 }

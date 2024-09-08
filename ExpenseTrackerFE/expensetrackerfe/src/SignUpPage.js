@@ -98,31 +98,44 @@ function SignUpPage() {
         setErrUserNameLen(false);
     }
 
-    const handleSubmit = () => {
+    const isUserNamePresent = async (name) => {
+        try {
+            const response = await axios.post(`http://localhost:9090/api-signup/signup/${name}`);
+            return response.status !== 200;  // Return true if username is taken
+        } catch (error) {
+            console.error("Error checking user availability", error);
+            return true;  // Assume username is taken if an error occurs
+        }
+    };
+    
+    // Example usage in handleSubmit:
+    const handleSubmit = async () => {
         checkValidations();
         let isMismatch = checkBothPasswords();
         if (isMismatch) {
             passMismatch();
+            return;
         }
-
+    
         const signUpData = {
             username: userName,
             password: password,
             email: email
+        };
+        const isPresent = await isUserNamePresent(userName.trim());
+        if (isPresent) {
+            swal("Error!", "Username taken please change.", "warning");
+        } else {
+            axios.post("http://localhost:9090/api-signup/signup", signUpData)
+                .then(response => {
+                    swal("Success!", "Signup completed.", "success");
+                })
+                .catch(error => {
+                    swal("Error!", "Signup Failed.", "warning");
+                    console.error("Error signing up:", error);
+                });
         }
-        axios.post("http://localhost:9090/api-signup/signup", signUpData)
-            .then(response => {
-                // Handle success, e.g., navigate to another page or show success message
-                console.log("Login Successful:", response.data);
-                swal("Success!", "signup completed.", "success");
-            })
-            .catch(error => {
-                // Handle error, e.g., show error message
-                swal("Error!", "Signup Failed.", "warning");
-                console.error("Error logging in:", error);
-            });
-    }
-
+    };
     const showPassValidations = () => {
         swal({
             title: "Password Validations",

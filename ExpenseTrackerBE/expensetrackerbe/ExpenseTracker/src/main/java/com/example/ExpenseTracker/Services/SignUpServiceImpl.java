@@ -21,4 +21,10 @@ public class SignUpServiceImpl implements SignUpService {
         signupEntity.setEmail(signupRequest.getEmail());
         return signuprepo.save(signupEntity);    
     }
+
+	@Override
+	public Boolean isUserPresentInDB(String Username) {
+		
+		return signuprepo.existsByUsername(Username);
+	}
 }

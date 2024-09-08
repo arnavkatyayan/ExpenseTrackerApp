@@ -6,4 +6,5 @@ import com.example.ExpenseTracker.Request.SignUpRequest;
 public interface SignUpService {
     
     SignupEntity saveUser(SignUpRequest signupRequest);
+    Boolean isUserPresentInDB(String Username);
 }
