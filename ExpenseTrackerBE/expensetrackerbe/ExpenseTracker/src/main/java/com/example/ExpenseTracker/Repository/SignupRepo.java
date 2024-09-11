@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SignupRepo extends JpaRepository<SignupEntity, Long> {
 	
 	boolean existsByUsername(String Username);
+	boolean existsByEmail(String email);
 }

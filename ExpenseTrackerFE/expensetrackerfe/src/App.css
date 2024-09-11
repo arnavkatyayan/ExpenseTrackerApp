@@ -186,3 +186,9 @@
 .sweetalert-button:hover {
   background-color: #45a049; /* Hover effect */
 }
+.forget-pass {
+  margin-left: 14px;
+  margin-top:16px;
+  display: flex;
+  gap:5px;
+}
