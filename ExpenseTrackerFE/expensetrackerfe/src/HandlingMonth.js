@@ -6,10 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import swal from 'sweetalert';
 
 function HandlingMonth() {
-    const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+    
     const [monthName, setMonthName] = useState("");
     const [amount, setAmount] = useState(0);
     const [errAmount, setErrAmount] = useState(false);
