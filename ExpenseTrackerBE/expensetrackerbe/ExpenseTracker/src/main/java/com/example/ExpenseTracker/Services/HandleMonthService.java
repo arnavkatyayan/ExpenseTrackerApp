@@ -6,5 +6,5 @@ import com.example.ExpenseTracker.Request.HandleMonthRequest;
 public interface HandleMonthService {
 
 	HandlingMonthEntity saveMonth(HandleMonthRequest handlingMonthRequest);
-	
+	int getCurrentMonthSalary(String month);
 }
