@@ -35,76 +35,99 @@ function ShowTable(props) {
 
     const handleSelectChange = (option) => {
         setSelectedOption(option);
-    }
+    };
 
     const handleSaveToPC = () => {
         setSaveToPc(!saveToPc);
-    }
+    };
 
     const handleSendToMail = () => {
         setSendToMail(!sendToMail);
-    }
+    };
 
     const handleBack = () => {
         props.setShowTable(false);
-    }
+    };
 
+    // Fetches total expense for the selected month
     const handleSalary = async () => {
         if (selectedOption) {
             const response = await axios.get(`http://localhost:9090/api-expenseTracker/getFinalSalary/${selectedOption.value}`);
-            setTotalExpense(response.data);
+            return response.data; // Return the fetched data
         }
-    }
+        return 0;
+    };
 
+    // Fetches the current month's salary
     const getCurrentMonthSalary = async () => {
         if (selectedOption) {
             const response = await axios.get(`http://localhost:9090/api-handling-month/getCurrMonthSal/${selectedOption.value}`);
-            setCurrMonthSalary(response.data);
+            return response.data; // Return the fetched data
         }
-    }
+        return 0;
+    };
 
-    const getDifference = () => {
-        // handleSalary();
-        // getCurrentMonthSalary();
+    // Updates the state and calculates the difference
+    const getDifference = async () => {
         getMonthDetail();
-        // setIsShowSalaryClicked(true);
-        // setDifference(currMonthSalary - totalExpense);
-    }
-    const handleReset = () => {
 
-    }
+        // Update the salary information after currentState is updated
+        setIsShowSalaryClicked(true);
+
+        // Fetch both expense and salary data
+        const fetchedExpense = await handleSalary();
+        const fetchedSalary = await getCurrentMonthSalary();
+
+        // Calculate difference directly
+        const calculatedDifference = fetchedSalary - fetchedExpense;
+
+        // Set the state for totalExpense, currMonthSalary, and difference
+        setTotalExpense(fetchedExpense);
+        setCurrMonthSalary(fetchedSalary);
+        setDifference(calculatedDifference);
+    };
+
+    const handleReset = () => {
+        setTotalExpense(0);
+        setCurrMonthSalary(0);
+        setDifference(0);
+        setIsShowSalaryClicked(false);
+        setSaveToPc(false);
+        setSendToMail(false);
+    };
+
     const getMonthDetail = () => {
         let ans = "";
         let index = -1;
         const date = new Date();
-        for(let i=0;i<monthOptions.length;i++) {
-            if(selectedOption.value === monthOptions[i].value) {
-                index = i+1;
+
+        for (let i = 0; i < monthOptions.length; i++) {
+            if (selectedOption.value === monthOptions[i].value) {
+                index = i + 1;
                 break;
             }
         }
 
-        if(selectedOption.value === props.currentMonth) {
-            ans = ans+"Current";
+        if (selectedOption.value === props.currentMonth) {
+            ans = "Current";
+        } else if (index < date.getMonth() + 1) { // +1 because getMonth() is zero-based
+            ans = "Savings";
+        } else {
+            ans = "Future";
         }
-        else if(index<date.getMonth()) {
-            ans = ans+"Savings";
-        }
-        else {
-            ans = ans+"Future";
-        }
+
         setCurrentState(ans);
-    }
+    };
 
     return (
         <div className="expense-tracker">
             <div className="login-page show-table">
                 {/* Table Component */}
                 <div className="table-wrapper">
-                    <ReactTableComponent 
-                        data={props.data} 
-                        columns={props.columns} 
-                        defaultPageSize={3} 
+                    <ReactTableComponent
+                        data={props.data}
+                        columns={props.columns}
+                        defaultPageSize={3}
                     />
                 </div>
 
@@ -117,7 +140,7 @@ function ShowTable(props) {
                                 label="Save To PC"
                                 className="input-field"
                                 onChange={handleSaveToPC}
-                                value={saveToPc}
+                                checked={saveToPc}
                             />
                         </Form.Group>
                         <Form.Group controlId="formBasicCheckbox">
@@ -126,7 +149,7 @@ function ShowTable(props) {
                                 label="Send To Email"
                                 className="input-field"
                                 onChange={handleSendToMail}
-                                value={sendToMail}
+                                checked={sendToMail}
                             />
                         </Form.Group>
                     </Form>
@@ -156,17 +179,16 @@ function ShowTable(props) {
                         Show My Salary
                     </Button>
                 </div>
+
                 {isShowSalaryClicked ? (
-                    currentState === "current" ? (
+                    currentState === "Current" ? (
                         <h5>The current salary left for {props.currentMonth} month is: {difference}</h5>
-                    ) : currentState === "saving" ? (
-                        <h5>The salary saved for {selectedOption.value} is {savings}.</h5> // Replace with your desired content
-                    ) : currentState === "future" ? (
-                        <h5>Information about future salary is not available.</h5> // Replace with your desired content
+                    ) : currentState === "Savings" ? (
+                        <h5>The salary saved for {selectedOption.value} is {savings}.</h5>
+                    ) : currentState === "Future" ? (
+                        <h5>Information about future salary is not available.</h5>
                     ) : null
                 ) : null}
-
-
             </div>
         </div>
     );
