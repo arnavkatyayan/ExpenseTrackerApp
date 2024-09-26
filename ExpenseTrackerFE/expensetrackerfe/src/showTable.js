@@ -3,6 +3,7 @@ import ReactTableComponent from "./ReactTableComponent";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
 import Select from 'react-select';
+import swal from "sweetalert";
 function ShowTable(props) {
     const [totalExpense, setTotalExpense] = useState(0);
     const [currMonthSalary, setCurrMonthSalary] = useState(0);
@@ -96,6 +97,36 @@ function ShowTable(props) {
         setSendToMail(false);
     };
 
+    const handleSaveOptions = () => {
+        if (saveToPc === false && sendToMail === false) {
+            swal("Error", "Please select either of the checkboxes! ", "warning");
+            return;
+        }
+
+        const tableData = {
+            saveToPC: saveToPc,
+            sendToMail: sendToMail
+        }
+        axios.post("http://localhost:9090/api-expenseTracker/handleExpenseTransfer", tableData).then(response => {
+            if (saveToPc && !sendToMail) {
+                swal("Success!", "Excel File got saved in PC!", "success");
+
+            }
+            else if (sendToMail && !saveToPc) {
+                swal("Success!", "Mail sent!", "success");
+
+            }
+            else {
+                swal("Success!", "Table Data Saved!", "success");
+            }
+
+        }).catch(error => {
+            swal("Error", "Error Sending data", "warning");
+        })
+        setSaveToPc(false);
+        setSendToMail(false);
+    }
+
     const getMonthDetail = () => {
         let ans = "";
         let index = -1;
@@ -169,7 +200,7 @@ function ShowTable(props) {
                     <Button variant="success" type="submit" onClick={handleBack}>
                         Back
                     </Button>
-                    <Button variant="primary" type="button">
+                    <Button variant="primary" type="button" onClick={handleSaveOptions}>
                         Save Options
                     </Button>
                     <Button variant="primary" type="button" onClick={handleReset}>

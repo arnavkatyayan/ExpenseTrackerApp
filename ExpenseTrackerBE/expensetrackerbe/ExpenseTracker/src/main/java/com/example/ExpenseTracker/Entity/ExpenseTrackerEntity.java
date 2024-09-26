@@ -10,78 +10,75 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="expense_tracker")
+@Table(name = "expense_tracker")
 public class ExpenseTrackerEntity {
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column(name="expenseamount")
-	private int expenseAmount;
-	
-	@Column(name="expenseid")
-	private int expenseId;
-	
-	@Column(name="expensename")
-	private String expenseName;
-	
-	@Column(name="monthname")
-	private String monthName;
-	
-	@Column(name="expensedate")
-	private Timestamp expenseDate;
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(name = "expenseamount", nullable = false)
+    private int expenseAmount;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(name = "expenseid", unique = true, nullable = false) // Mark as unique and not null
+    private int expenseId;
 
-	public int getExpenseAmount() {
-		return expenseAmount;
-	}
+    @Column(name = "expensename", nullable = false) // Ensure this is not null as well
+    private String expenseName;
 
-	public void setExpenseAmount(int expenseAmount) {
-		this.expenseAmount = expenseAmount;
-	}
+    @Column(name = "monthname")
+    private String monthName;
 
-	public String getExpenseName() {
-		return expenseName;
-	}
+    @Column(name = "expensedate", nullable = false) // Assuming you want this to be mandatory
+    private Timestamp expenseDate;
 
-	public void setExpenseName(String expenseName) {
-		this.expenseName = expenseName;
-	}
+    // Getters and Setters
 
-	public String getMonthName() {
-		return monthName;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setMonthName(String monthName) {
-		this.monthName = monthName;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public int getExpenseId() {
-		return expenseId;
-	}
+    public int getExpenseAmount() {
+        return expenseAmount;
+    }
 
-	public void setExpenseId(int expenseId) {
-		this.expenseId = expenseId;
-	}
+    public void setExpenseAmount(int expenseAmount) {
+        this.expenseAmount = expenseAmount;
+    }
 
-	public Timestamp getExpenseDate() {
-		return expenseDate;
-	}
+    public String getExpenseName() {
+        return expenseName;
+    }
 
-	public void setExpenseDate(Timestamp expenseDate) {
-		this.expenseDate = expenseDate;
-	}
-	
-	
-	
-	
-	
+    public void setExpenseName(String expenseName) {
+        this.expenseName = expenseName;
+    }
+
+    public String getMonthName() {
+        return monthName;
+    }
+
+    public void setMonthName(String monthName) {
+        this.monthName = monthName;
+    }
+
+    public int getExpenseId() {
+        return expenseId;
+    }
+
+    public void setExpenseId(int expenseId) {
+        this.expenseId = expenseId;
+    }
+
+    public Timestamp getExpenseDate() {
+        return expenseDate;
+    }
+
+    public void setExpenseDate(Timestamp expenseDate) {
+        this.expenseDate = expenseDate;
+    }
 }
