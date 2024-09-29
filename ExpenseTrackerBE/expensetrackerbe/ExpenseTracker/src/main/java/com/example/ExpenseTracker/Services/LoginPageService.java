@@ -6,4 +6,5 @@ import org.springframework.stereotype.Service;
 public interface LoginPageService {
 	
 	Boolean isCredentialsCorrect(String Username, String Password);
+	Boolean isMonthAdded(String monthName);
 }

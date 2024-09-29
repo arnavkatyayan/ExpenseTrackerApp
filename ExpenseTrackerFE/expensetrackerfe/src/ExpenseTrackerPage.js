@@ -6,7 +6,7 @@ import ShowTable from './showTable';
 import swal from 'sweetalert';
 import axios from 'axios';
 
-function ExpenseTrackerPage() {
+function ExpenseTrackerPage(props) {
     const [expenseName, setExpenseName] = useState("");
     const [expenseAmount, setExpenseAmount] = useState("");
     const [errExpenseName, setErrExpenseName] = useState(false);
@@ -16,6 +16,8 @@ function ExpenseTrackerPage() {
     const [monthName, setMonthName] = useState("");
     const [currentDate, setCurrentDate] = useState("");
     const [currentDateInTS, setCurrentDateInTS] = useState(0);
+    const [isEditable, setIsEditable] = useState(false);
+    const [editableIndex, setEditableIndex] = useState(-1);
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -44,8 +46,10 @@ function ExpenseTrackerPage() {
         getMonthName();
         fetchExpenseList();
         getCurrentDate();
-      //  handleTable();
+    // handleTable();
     }, []);
+
+    
 
     const columns = useMemo(
         () => [
@@ -63,19 +67,53 @@ function ExpenseTrackerPage() {
                 )
             }
         ],
-        []
+        [expenseList]
     );
+    useEffect(()=> {
+        if(isEditable) {
+            setShowTable(false);
+
+        }
+        
+    },[isEditable]);
 
     const handleEdit = (index) => {
-        // Implement your edit functionality
-    }
+        // Ensure the index is valid
+        if (index >= 0 && index < expenseList.length) {
+            setIsEditable(true);
+            const selectedExpense = expenseList[index];
+            
+            // Set expense details to the state
+            setExpenseName(selectedExpense.name); // Using the accessor name from columns
+            setExpenseAmount(selectedExpense.amount); // Using the accessor amount from columns
+            setEditableIndex(selectedExpense.expenseId); // Setting the ID for updates
+        }
+    };
+    
+    const handleDelete = async (index) => {
+        try {
+            if (expenseList.length > 0 && index >= 0 && index < expenseList.length) {
+                const expenseId = expenseList[index].expenseId;
+                console.log("Deleting expense with ID:", expenseId);
 
-    const handleDelete = (index) => {
-        // Implement your delete functionality
-    }
+                // Perform the delete request
+                await axios.delete(`http://localhost:9090/api-expenseTracker/deleteExpense/${expenseId}`);
+
+                // Success alert
+                swal("Success", "Entry Deleted!", "success");
+
+                // Re-fetch the expense list after deletion
+                await fetchExpenseList();
+            } else {
+                console.error("Invalid index or empty expense list");
+            }
+        } catch (error) {
+            swal("Error", "Error deleting the entry", "error");
+            console.error("Error deleting expense:", error);
+        }
+    };
 
     const getDateFromTS = (date) => {
-        // console.log(typeof date);
         const conversion = new Date(date);
         return conversion.toLocaleDateString();
     }
@@ -85,11 +123,12 @@ function ExpenseTrackerPage() {
             const response = await axios.get("http://localhost:9090/api-expenseTracker/getExpenses");
             const expenseData = response.data.map(item => ({
                 name: item.expenseName,
-                amount: parseFloat(item.expenseAmount),  // Correct parsing here
-                date:  getDateFromTS(item.expenseDate)
+                amount: parseFloat(item.expenseAmount),
+                date: getDateFromTS(item.expenseDate),
+                expenseId: item.expenseId,
             }));
             console.log("Fetched Expense Data: ", expenseData);
-            setExpenseList(expenseData);  // Update state once after looping
+            setExpenseList(expenseData);
         } catch (error) {
             console.error("Error fetching expenses:", error);
         }
@@ -114,36 +153,52 @@ function ExpenseTrackerPage() {
         }
 
         // If validation passes, add the expense to the list
-        if (!hasError) {
+        if (!hasError && !isEditable) {
             const expenseTrackerData = {
                 expenseName: expenseName,
                 expenseAmount: Number(expenseAmount),
                 monthName: monthName,
-                expenseId: expenseList.length ? expenseList.length + 1 : 1,
+                expenseId: editableIndex,
                 expenseDate: getCurrentDateInTS()
             };
             axios.post("http://localhost:9090/api-expenseTracker/saveExpense", expenseTrackerData)
                 .then(response => {
                     swal("Success!", "Expense Data Saved!", "success");
-                    // Optionally fetch updated expense list
                     fetchExpenseList();  // Fetch updated expenses after saving
+                    
                 })
                 .catch(error => {
                     swal("Error!", "Failed to save the expense.", "warning");
                 });
 
             // Reset input fields
-            setExpenseName("");
-            setExpenseAmount("");
+
         }
+        if (!hasError && isEditable) {
+            const expenseTrackerData = {
+                expenseName: expenseName,
+                expenseAmount: Number(expenseAmount),
+                monthName: monthName,
+                expenseDate: getCurrentDateInTS()
+            };
+            axios.put(`http://localhost:9090/api-expenseTracker/updateExpense/${editableIndex}`, expenseTrackerData)
+
+                .then(response => {
+                    swal("Success!", "Expense Data Updated!", "success");
+                    fetchExpenseList();  // Fetch updated expenses after saving
+                    setIsEditable(false);
+                })
+                .catch(error => {
+                    swal("Error!", "Failed to update the expense.", "warning");
+                });
+
+        }
+        setExpenseName("");
+        setExpenseAmount("");
     }
 
     const handleTable = async () => {
-        // if (expenseList.length > 0) {
-        //     setShowTable(true);
-        // } else {
-        //     swal("Error!", "No data to display.", "warning");
-        // }
+      
         const response = await axios("http://localhost:9090/api-expenseTracker/isTableEmpty")
         if(response.data == false) {
             setShowTable(true);
@@ -175,15 +230,13 @@ function ExpenseTrackerPage() {
             {!showTable ? (
                 <div className="login-page">
                     <Form onSubmit={handleExpense}>
-
-                    <Form.Group className="mb-3 input-container" controlId="formBasicExpenseName">
+                        <Form.Group className="mb-3 input-container" controlId="formBasicDate">
                             <Form.Label className="labels">Date</Form.Label>
                             <Form.Control
                                 className="input-field disabled-input"
                                 type="text"
                                 disabled
                                 value={currentDate}
-                                
                             />
                         </Form.Group>
                         <Form.Group className="mb-3 input-container" controlId="formBasicExpenseName">
@@ -213,11 +266,13 @@ function ExpenseTrackerPage() {
                         </Form.Group>
 
                         <div className="btn-grps">
-                            <Button variant="success" type="button" onClick={handleTable}>
+                            <Button variant="success" type="button" onClick={() => {
+                                handleTable();
+                            }}>
                                 Show Table
                             </Button>
                             <Button variant="success" type="submit">
-                                Add
+                                {!isEditable ? "Save" : "Update"}
                             </Button>
                             <Button variant="primary" type="button" onClick={handleReset}>
                                 Reset

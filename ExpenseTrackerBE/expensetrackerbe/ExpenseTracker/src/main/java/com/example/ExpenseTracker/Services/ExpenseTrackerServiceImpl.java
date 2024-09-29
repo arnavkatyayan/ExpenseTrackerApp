@@ -186,6 +186,27 @@ public class ExpenseTrackerServiceImpl implements ExpenseTrackerService {
         }
     }
 
+    @Override
+    public ExpenseTrackerEntity updateExpense(int id, ExpenseTrackerRequest expenseTrackerRequest) {
+        // Check if the expense with the given ID exists
+        if (expenseTrackerRepo.existsByExpenseId(id)) {
+            // Retrieve the existing expense from the database
+            ExpenseTrackerEntity existingExpense = expenseTrackerRepo.findByExpenseId(id);
+            
+            // Update the fields of the existing expense
+            existingExpense.setExpenseName(expenseTrackerRequest.getExpenseName());
+            existingExpense.setExpenseAmount(expenseTrackerRequest.getExpenseAmount());
+            existingExpense.setMonthName(expenseTrackerRequest.getMonthName());
+            
+            // Save the updated expense back to the repository
+            return expenseTrackerRepo.save(existingExpense);
+        }
+        
+        // Optionally, throw an exception or return a specific value if the expense does not exist
+        return null; // or throw new EntityNotFoundException("Expense not found");
+    }
+
+
 
 
 }

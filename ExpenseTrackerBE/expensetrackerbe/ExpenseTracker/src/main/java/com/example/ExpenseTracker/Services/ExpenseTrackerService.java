@@ -14,4 +14,5 @@ public interface ExpenseTrackerService {
 	Long getFinalSalary(String monthName);
 	void handleTransfer(Boolean saveToPC, Boolean sendToMail) throws MessagingException;
 	void deleteExpense(int id);
+	ExpenseTrackerEntity updateExpense(int id, ExpenseTrackerRequest expenseTrackerRequest);
 }

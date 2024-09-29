@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './App.css';
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import hide from './hide.png'; 
+import hide from './hide.png';
 import view from './view.png';
+import SignUpPage from "./SignUpPage";
+import HandlingMonth from "./HandlingMonth";
+import swal from "sweetalert";
+import ExpenseTrackerPage from "./ExpenseTrackerPage";
 function LoginPage() {
 
     const [userName, setUserName] = useState("");
@@ -14,15 +18,42 @@ function LoginPage() {
     const [isIconClicked, setIsIconClicked] = useState(false);
     const [errUsername, setErrUsername] = useState(false);
     const [errPassword, setErrPassword] = useState(false);
-
+    const [isCurrMonthDataAdded,setIsCurrMonthDataAdded] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const handleForgetPassword = () => {
         setForgetPassClicked(true);
+    }
+
+    useEffect(()=> {
+        checkCurrentMonthAdded();
+    },[])
+
+    const checkCurrentMonthAdded = async ()=> {
+        const month = getCurrentMonth();
+        const response = await axios.get(`http://localhost:9090/api-login/isMonthAdded/${month}`);
+        if(response.data) {
+            console.log(response.data);
+            setIsCurrMonthDataAdded(true);
+        } 
+        
+    }
+
+    const getCurrentMonth = ()=> {
+        const date = new Date();
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const currMonth = months[date.getMonth()];
+        return currMonth;
     }
 
     const handleReset = () => {
         setUserName("");
         setPassword("");
-
+        setErrUsername(false);
+        setErrPassword(false);
+        setIsIconClicked(false);
     }
 
     const handleIconClicking = () => {
@@ -43,22 +74,34 @@ function LoginPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault(); // Prevents page reload on form submission
-
+        if (userName.trim().length === 0) {
+            setErrUsername(true);
+        }
+        if (password.trim().length === 0) {
+            setErrPassword(true);
+        }
         const loginData = {
             username: userName,
             password: password
         };
 
-        axios.post("http://localhost:9090/api/login", loginData)
+        axios.post("http://localhost:9090/api-login/login", loginData)
             .then(response => {
                 // Handle success, e.g., navigate to another page or show success message
+                swal("Success!","Login Successful","success");
+                setIsLoggedIn(true);
                 console.log("Login successful:", response.data);
             })
             .catch(error => {
                 // Handle error, e.g., show error message
+                swal("Error","Username or password incorrect!","error");
                 console.error("Error logging in:", error);
             });
     };
+
+    if(isLoggedIn) {
+        return isCurrMonthDataAdded ? <ExpenseTrackerPage userName={userName}/>:<HandlingMonth/>
+    }
 
     return (
         <div className="expense-tracker">
@@ -74,6 +117,7 @@ function LoginPage() {
                             onChange={handleUsername}
                             value={userName}
                         />
+                        {errUsername ? <p className="validation-warning">Please enter the username</p> : null}
                     </Form.Group>
 
                     {/* Password field with icon inside */}
@@ -88,8 +132,12 @@ function LoginPage() {
                                 value={password}
                             />
                             {!isIconClicked ? 
-                            <img src={hide} alt="hide" className="password-icon" onClick={handleIconClicking} /> : <img src={view} className="password-icon" onClick={handleIconClicking}/> }
+                                <img src={hide} alt="hide" className="password-icon" onClick={handleIconClicking} /> 
+                                : 
+                                <img src={view} alt="view" className="password-icon" onClick={handleIconClicking} />
+                            }
                         </div>
+                        {errPassword ? <p className="validation-warning">Please enter the password</p> : null}
                     </Form.Group>
 
                     <div className="btn-grps">

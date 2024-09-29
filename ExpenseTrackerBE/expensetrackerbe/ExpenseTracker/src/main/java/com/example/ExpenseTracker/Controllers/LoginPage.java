@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,4 +34,11 @@ public class LoginPage {
 	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
 	        }
 	    }
+	 
+	 @GetMapping("/isMonthAdded/{monthName}")
+	 public ResponseEntity<Boolean> isMonthAdded(@PathVariable String monthName) {
+		 
+		 Boolean check = loginpageservice.isMonthAdded(monthName);
+		 return ResponseEntity.ok(check);
+	 }
 }

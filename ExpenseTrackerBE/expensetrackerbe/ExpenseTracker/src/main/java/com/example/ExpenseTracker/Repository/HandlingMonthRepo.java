@@ -6,7 +6,7 @@ import com.example.ExpenseTracker.Entity.HandlingMonthEntity;
 
 public interface HandlingMonthRepo extends JpaRepository<HandlingMonthEntity,Long>{
 	
-	
+	boolean existsByMonthName(String monthName);
 }
 	
 
