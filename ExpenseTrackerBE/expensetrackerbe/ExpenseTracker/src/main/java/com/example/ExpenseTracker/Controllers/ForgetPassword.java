@@ -32,5 +32,11 @@ public class ForgetPassword {
 	}
 	
 }
+	@PostMapping("forgetPassword/{email}")
+	public ResponseEntity<String> forgetPassword(@PathVariable String email) {
+		
+		forgetpasswordservice.forgetPassword(email);
+		return ResponseEntity.status(HttpStatus.OK).body("Email Sent");
+	}
 
 }
