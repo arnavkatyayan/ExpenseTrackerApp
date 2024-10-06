@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.example.ExpenseTracker.Entity.ExpenseTrackerEntity;
+import com.example.ExpenseTracker.Entity.SignupEntity;
 import com.example.ExpenseTracker.Repository.SignupRepo;
 
 import jakarta.mail.MessagingException;
@@ -48,11 +49,27 @@ public class ForgetPasswordServiceImpl implements ForgetPasswordService {
 
 	        // Send the email
 	        mailSender.send(message);
+	        saveToDB(pass,email);
 	    } catch (MessagingException e) {
 	        e.printStackTrace();
 	    }
 	}
 	
+	public void saveToDB(String pass, String email) {
+	    if (signuprepo.existsByEmail(email)) {
+	        // Fetch the existing user by email
+	        SignupEntity signupEntity = signuprepo.findByEmail(email);
+	        
+	        // Update the password
+	        signupEntity.setPassword(pass);
+	        
+	        // Save the updated entity to the repository
+	        signuprepo.save(signupEntity);
+	    } else {
+	        System.out.println("User with email " + email + " does not exist.");
+	    }
+	}
+
 	public int getPasswordLength(int min, int max) {
 		int len = (int)(Math.random()*8)+8;
 		return len;
