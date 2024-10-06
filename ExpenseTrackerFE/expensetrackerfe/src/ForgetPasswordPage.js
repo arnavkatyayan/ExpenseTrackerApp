@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
 import swal from "sweetalert";
-function ForgetPasswordPage() {
+function ForgetPasswordPage(props) {
 
     const [email, setEmail] = useState("");
     const [errEmail, setErrEmail] = useState(false);
@@ -63,7 +63,7 @@ function ForgetPasswordPage() {
             axios.post(`http://localhost:9090/api-forget-password/forgetPassword/${email.trim()}`).then(
                 response => {
                     swal("Success!", "Mail Sent!.", "success");
-
+                    props.setForgetPassClicked(false);
                 }
             ).catch(error => {
                 swal("Error!", "Error sending mail.", "warning");

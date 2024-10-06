@@ -9,7 +9,8 @@ import SignUpPage from "./SignUpPage";
 import HandlingMonth from "./HandlingMonth";
 import swal from "sweetalert";
 import ExpenseTrackerPage from "./ExpenseTrackerPage";
-function LoginPage() {
+import ForgetPasswordPage from "./ForgetPasswordPage";
+function LoginPage(props) {
 
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
@@ -74,6 +75,7 @@ function LoginPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault(); // Prevents page reload on form submission
+        
         if (userName.trim().length === 0) {
             setErrUsername(true);
         }
@@ -90,6 +92,7 @@ function LoginPage() {
                 // Handle success, e.g., navigate to another page or show success message
                 swal("Success!","Login Successful","success");
                 setIsLoggedIn(true);
+                props.setIsLogoutClicked(true);
                 console.log("Login successful:", response.data);
             })
             .catch(error => {
@@ -99,10 +102,17 @@ function LoginPage() {
             });
     };
 
-    if(isLoggedIn) {
-        return isCurrMonthDataAdded ? <ExpenseTrackerPage userName={userName}/>:<HandlingMonth/>
+    if(isLoggedIn && props.isLogoutClicked === true) {
+        
+        return isCurrMonthDataAdded ? <ExpenseTrackerPage userName={userName} logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked}/>:<HandlingMonth logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked}/>
     }
-
+    if(isNewUserClicked) {
+        return <SignUpPage/>
+    }
+    if(forgetPassClicked) {
+        return <ForgetPasswordPage setForgetPassClicked={setForgetPassClicked}/>
+    }
+    
     return (
         <div className="expense-tracker">
             <div className="login-page">
@@ -148,7 +158,7 @@ function LoginPage() {
                             Reset
                         </Button>
                         <Button variant="danger" type="button" onClick={handleForgetPassword}>
-                            Password Forget
+                            Forget Password
                         </Button>
                     </div>
 
@@ -164,6 +174,7 @@ function LoginPage() {
             </div>
         </div>
     );
+
 }
 
 export default LoginPage;
