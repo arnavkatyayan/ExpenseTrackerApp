@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.ExpenseTracker.Entity.SignupEntity;
 import com.example.ExpenseTracker.Request.SignUpRequest;
 import com.example.ExpenseTracker.Services.SignUpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", allowCredentials = "true")
 @RestController
@@ -21,6 +23,8 @@ public class SignUp {
 
     @Autowired
     SignUpService signupservice;
+    
+    private static final Logger logger = LoggerFactory.getLogger(SignUp.class);
 
     @PostMapping("/signup")
     public SignupEntity signUp(@RequestBody SignUpRequest signupRequest) {
