@@ -18,6 +18,7 @@ public class SignUpServiceImpl implements SignUpService {
         SignupEntity signupEntity = new SignupEntity();
         signupEntity.setUsername(signupRequest.getUsername());
         signupEntity.setPassword(signupRequest.getPassword());
+        signupEntity.setJobRole(signupRequest.getjobRole());
         signupEntity.setEmail(signupRequest.getEmail());
         return signuprepo.save(signupEntity);    
     }

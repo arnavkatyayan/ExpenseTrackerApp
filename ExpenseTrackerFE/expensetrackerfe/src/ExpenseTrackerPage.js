@@ -228,7 +228,7 @@ function ExpenseTrackerPage(props) {
     return (
         <div className="expense-tracker">
             {!showTable ? (
-                <div className="login-page">
+                <div className="login-page-table">
                     <Form onSubmit={handleExpense}>
                         <Form.Group className="mb-3 input-container" controlId="formBasicDate">
                             <Form.Label className="labels">Date</Form.Label>

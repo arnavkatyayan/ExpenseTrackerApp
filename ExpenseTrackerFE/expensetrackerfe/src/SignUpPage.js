@@ -12,20 +12,25 @@ import axios from "axios";
 function SignUpPage() {
 
     const [userName, setUserName] = useState("");
+    const [jobRole, setJobRole] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isIconClicked, setIsIconClicked] = useState(false);
     const [isIconClickedConfirmPassWord, setIsIconClickedConfirmPassword] = useState(false);
     const [errUsername, setErrUsername] = useState(false);
+    const [errjobRole, setErrjobRole] = useState(false);
     const [errPassword, setErrPassword] = useState(false);
     const [errConfirmPassword, setErrConfirmPassword] = useState(false);
     const [errEmail, setErrEmail] = useState(false);
-    const warningMessages = ["The username maximum length should be 10", "Invalid email format"];
+    const warningMessages = ["The username maximum length should be 10", "The Job Role maximum length should be 10","Invalid email format"];
     const [errUsernameLen, setErrUserNameLen] = useState(false);
     const [invalidEmail, setInvalidEmail] = useState(false);
     const handleUsername = (evt) => {
         setUserName(evt.target.value);
+    }
+    const handleJobRole = (evt) => {
+        setJobRole(evt.target.value);
     }
 
     const handlePassword = (evt) => {
@@ -72,6 +77,9 @@ function SignUpPage() {
         if (userName.trim().length === 0) {
             setErrUsername(true);
         }
+        if (jobRole.trim().length === 0) {
+            setErrjobRole(true);
+        }
         if (password.trim().length === 0) {
             setErrPassword(true);
         }
@@ -89,6 +97,7 @@ function SignUpPage() {
         setErrConfirmPassword("");
         setErrEmail("");
         setErrUsername("");
+        setErrjobRole("");
         setErrPassword(false);
         setIsIconClicked(false);
         setIsIconClickedConfirmPassword(false);
@@ -119,6 +128,7 @@ function SignUpPage() {
     
         const signUpData = {
             username: userName,
+            jobRole:jobRole,
             password: password,
             email: email
         };
@@ -207,7 +217,7 @@ function SignUpPage() {
     const checkBothPasswords = () => {
         let isSame = false;
         if (password && confirmPassword) {
-            if (password.trim() != confirmPassword.trim()) {
+            if (password.trim() !== confirmPassword.trim()) {
                 isSame = true;
             }
         }
@@ -261,6 +271,19 @@ function SignUpPage() {
                     </Form.Group>
 
                     <Form.Group className="mb-3 input-container" controlId="formBasicEmail">
+                        <Form.Label className="labels">Job Role</Form.Label>
+                        <Form.Control
+                            className="input-field"
+                            type="text"
+                            placeholder="Enter Job Role"
+                            onChange={handleJobRole}
+                            value={jobRole}
+                        />
+                        {errjobRole ? <p className="validation-warning">Please enter the Job Role</p> : null}
+                        {errUsernameLen ? <p className="validation-warning">{warningMessages[1]}</p> : null}
+                    </Form.Group>
+
+                    <Form.Group className="mb-3 input-container" controlId="formBasicEmail">
                         <Form.Label className="labels">Email</Form.Label>
                         <Form.Control
                             className="input-field"
@@ -270,7 +293,7 @@ function SignUpPage() {
                             value={email}
                         />
                         {errEmail ? <p className="validation-warning">Please enter the Email</p> : null}
-                        {invalidEmail ? <p className="validation-warning">{warningMessages[1]}</p> : null}
+                        {invalidEmail ? <p className="validation-warning">{warningMessages[2]}</p> : null}
                     </Form.Group>
 
                     {/* Password field with icon inside */}
