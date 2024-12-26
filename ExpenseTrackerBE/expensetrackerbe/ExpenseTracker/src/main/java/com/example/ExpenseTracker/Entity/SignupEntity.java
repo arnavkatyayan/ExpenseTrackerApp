@@ -21,6 +21,9 @@ public class SignupEntity {
 	@Column(name="password")
 	private String password;
 	
+	@Column(name="jobRole")
+	private String jobRole;
+	
 	@Column(name="email")
 	private String email;
 
@@ -46,6 +49,14 @@ public class SignupEntity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getJobRole() {
+		return jobRole;
+	}
+
+	public void setJobRole(String jobRole) {
+		this.jobRole = jobRole;
 	}
 
 	public String getEmail() {
