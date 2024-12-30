@@ -1,5 +1,7 @@
 package com.example.ExpenseTracker.Controllers;
 
+import java.sql.Timestamp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ExpenseTracker.DTO.LoginPageDTO;
 import com.example.ExpenseTracker.Request.LoginRequest;
 import com.example.ExpenseTracker.Services.LoginPageService;
 
@@ -40,5 +43,14 @@ public class LoginPage {
 		 
 		 Boolean check = loginpageservice.isMonthAdded(monthName);
 		 return ResponseEntity.ok(check);
+	 }
+	 
+	 @GetMapping("getLoginAttempts/{userName}")
+	 public ResponseEntity<LoginPageDTO> getLoginAttempts(@PathVariable String userName) {
+		 
+		 int loginAttemptsLeft = loginpageservice.loginAttemptsLeft(userName);
+		 Timestamp blockEndTime = loginpageservice.getBlockEndTime(userName);
+		 LoginPageDTO loginPageDTO = new LoginPageDTO(loginAttemptsLeft,blockEndTime);
+		 return ResponseEntity.ok(loginPageDTO);
 	 }
 }

@@ -21,6 +21,11 @@ function LoginPage(props) {
     const [errPassword, setErrPassword] = useState(false);
     const [isCurrMonthDataAdded,setIsCurrMonthDataAdded] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [minutes, setMinutes] = useState(30);
+    const [minutesChanged, setMinutesChanged] = useState(-1);
+    const [blockEndTime, setBlockEndTime] = useState("");
+    const [isBlockEndTimeEnabled, setIsBlockTimeEnabled] = useState(false);
+
     const handleForgetPassword = () => {
         setForgetPassClicked(true);
     }
@@ -73,34 +78,83 @@ function LoginPage(props) {
         setPassword(evt.target.value);
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault(); // Prevents page reload on form submission
-        
+    useEffect(() => {
+        if (isBlockEndTimeEnabled) {
+            const timer = setInterval(() => {
+                setMinutes((prevMinutes) => {
+                    if (prevMinutes > 0) {
+                        return prevMinutes - 1;
+                    }
+                    else {
+                        clearInterval(timer);
+                        setIsBlockTimeEnabled(false);
+                        return;
+                    }
+                });
+            }, 60000);
+            return () => clearInterval(timer);
+        }
+
+    }, [isBlockEndTimeEnabled])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
         if (userName.trim().length === 0) {
             setErrUsername(true);
+            return;
         }
         if (password.trim().length === 0) {
             setErrPassword(true);
+            return;
         }
+
         const loginData = {
             username: userName,
             password: password
         };
 
-        axios.post("http://localhost:9090/api-login/login", loginData)
-            .then(response => {
-                // Handle success, e.g., navigate to another page or show success message
-                swal("Success!","Login Successful","success");
-                setIsLoggedIn(true);
-                props.setIsLogoutClicked(true);
-                console.log("Login successful:", response.data);
-            })
-            .catch(error => {
-                // Handle error, e.g., show error message
-                swal("Error","Username or password incorrect!","error");
-                console.error("Error logging in:", error);
-            });
+        try {
+            const response = await axios.post("http://localhost:9090/api-login/login", loginData);
+            if (response.data === "Login successful" && isBlockEndTimeEnabled) {
+                swal("Error", `Your account is blocked for ${minutes} minutes`, "error");
+            }
+            swal("Success!", "Login Successful", "success");
+            setIsLoggedIn(true);
+            props.setIsLogoutClicked(true);
+            console.log("Login successful:", response.data);
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                const attemptsLeft = await getLoginAttempts(); // Await the Promise
+                if (attemptsLeft.loginAttempts > 0) {
+                    if (minutes == 0 || minutes == undefined) {
+                        setMinutes(30);
+                    }
+                    swal("Error", `Credentials are incorrect. ${attemptsLeft.loginAttempts} login attempt left.`, "error");
+                }
+                else if (attemptsLeft.loginAttempts === 0) {
+                    swal("Error", `Your account is blocked for ${minutes} minutes`, "error");
+                    setIsBlockTimeEnabled(true);
+                }
+            } else if (!error.response) {
+                swal("Error", "Network Error! Please try again later.", "error");
+            } else {
+                swal("Error", "Something went wrong!", "error");
+            }
+            console.error("Error logging in:", error);
+        }
     };
+
+    const getLoginAttempts = async () => {
+        try {
+            const resp = await axios.get(`http://localhost:9090/api-login/getLoginAttempts/${userName}`);
+            return resp.data;
+        } catch (error) {
+            console.error("Error fetching login attempts:", error);
+            return 0;
+        }
+    };
+
 
     if(isLoggedIn && props.isLogoutClicked === true) {
         
