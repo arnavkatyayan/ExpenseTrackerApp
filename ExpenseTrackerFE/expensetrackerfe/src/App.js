@@ -20,7 +20,7 @@ function App() {
 
       <LoginPage isLogoutClicked={isLogoutClicked} setIsLogoutClicked={setIsLogoutClicked} />
       <footer className='footer'>
-        <p>Version 1.0.0</p>
+        <p>2025.1.1</p>
       </footer>
     </div>
   );
