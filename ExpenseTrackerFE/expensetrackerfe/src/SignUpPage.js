@@ -9,7 +9,7 @@ import viewConfirmPass from './view.png';
 import swal from 'sweetalert';
 import axios from "axios";
 
-function SignUpPage() {
+function SignUpPage(props) {
 
     const [userName, setUserName] = useState("");
     const [jobRole, setJobRole] = useState("");
@@ -139,6 +139,7 @@ function SignUpPage() {
             axios.post("http://localhost:9090/api-signup/signup", signUpData)
                 .then(response => {
                     swal("Success!", "Signup completed.", "success");
+                    props.setIsNewUserClicked(false);
                 })
                 .catch(error => {
                     swal("Error!", "Signup Failed.", "warning");
