@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ExpenseTracker.Entity.SignupEntity;
@@ -31,18 +32,24 @@ public class SignUp {
         return signupservice.saveUser(signupRequest);
     }
     
-    @PostMapping("/signup/{username}")
-    public ResponseEntity<String> isUserPresent(@PathVariable String username) {
-    	
-    	Boolean userExists = signupservice.isUserPresentInDB(username);
-    	
-    	 if (userExists) {
-             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
-         } else {
-             return ResponseEntity.status(HttpStatus.OK).body("User is available");
-         }
-    	
+    @PostMapping("/signup/check")
+    public ResponseEntity<String> checkAvailability(@RequestParam String type, @RequestParam String value) {
+        if ("username".equals(type)) {
+            Boolean userExists = signupservice.isUserPresentInDB(value);
+            if (userExists) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body("User is available");
+            }
+        } else if ("email".equals(type)) {
+            Boolean isEmailPresent = signupservice.IsEmailPresent(value);
+            if (isEmailPresent) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Email taken");
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body("Email is available");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid type");
     }
 
-	
 }

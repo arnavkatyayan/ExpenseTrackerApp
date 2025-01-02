@@ -7,4 +7,5 @@ public interface SignUpService {
     
     SignupEntity saveUser(SignUpRequest signupRequest);
     Boolean isUserPresentInDB(String Username);
+    Boolean IsEmailPresent(String email);
 }

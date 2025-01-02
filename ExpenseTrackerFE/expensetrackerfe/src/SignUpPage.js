@@ -107,15 +107,27 @@ function SignUpPage(props) {
         setErrUserNameLen(false);
     }
 
-    const isUserNamePresent = async (name) => {
+    const isFieldAvailable = async (type, value) => {
         try {
-            const response = await axios.post(`http://localhost:9090/api-signup/signup/${name}`);
-            return response.status !== 200;  // Return true if username is taken
+            const response = await axios.post(`http://localhost:9090/api-signup/signup/check`, null, {
+                params: { type, value },
+            });
+            return response.status === 200; // Available if status is 200
         } catch (error) {
-            console.error("Error checking user availability", error);
-            return true;  // Assume username is taken if an error occurs
+            console.error(`Error checking ${type} availability:`, error);
+            return false; // Unavailable in case of an error
         }
     };
+    
+    // Usage:
+    const isUserNamePresent = async (name) => {
+        return await isFieldAvailable("username", name);
+    };
+    
+    const isEmailPresent= async (email) => {
+        return await isFieldAvailable("email", email);
+    };
+    
     
     // Example usage in handleSubmit:
     const handleSubmit = async () => {
@@ -132,9 +144,15 @@ function SignUpPage(props) {
             password: password,
             email: email
         };
-        const isPresent = await isUserNamePresent(userName.trim());
-        if (isPresent) {
-            swal("Error!", "Username taken please change.", "warning");
+        const isPresentUserName = await isUserNamePresent(userName.trim());
+        const isPresentEmail = await isEmailPresent(email.trim());
+        
+        if (!isPresentUserName && !isPresentEmail) {
+            swal("Error!", "Both username and email are taken. Please change them.", "warning");
+        } else if (!isPresentUserName) {
+            swal("Error!", "Username is taken. Please choose a different username.", "warning");
+        } else if (!isPresentEmail) {
+            swal("Error!", "Email is taken. Please choose a different email.", "warning");
         } else {
             axios.post("http://localhost:9090/api-signup/signup", signUpData)
                 .then(response => {

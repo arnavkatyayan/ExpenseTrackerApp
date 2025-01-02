@@ -28,4 +28,10 @@ public class SignUpServiceImpl implements SignUpService {
 		
 		return signuprepo.existsByUsername(Username);
 	}
+
+	@Override
+	public Boolean IsEmailPresent(String email) {
+		
+		return signuprepo.existsByEmail(email);
+	}
 }
