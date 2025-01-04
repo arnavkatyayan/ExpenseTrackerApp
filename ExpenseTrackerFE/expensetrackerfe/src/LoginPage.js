@@ -158,7 +158,7 @@ function LoginPage(props) {
 
     if(isLoggedIn && props.isLogoutClicked === true) {
         
-        return isCurrMonthDataAdded ? <ExpenseTrackerPage userName={userName} logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked}/>:<HandlingMonth logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked}/>
+        return isCurrMonthDataAdded ? <ExpenseTrackerPage userName={userName} logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked}/>:<HandlingMonth logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked} setIsCurrMonthDataAdded={setIsCurrMonthDataAdded}/>
     }
     if(isNewUserClicked) {
         return <SignUpPage setIsNewUserClicked={setIsNewUserClicked}/>

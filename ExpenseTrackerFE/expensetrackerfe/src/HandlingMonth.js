@@ -5,7 +5,7 @@ import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import swal from 'sweetalert';
 
-function HandlingMonth() {
+function HandlingMonth(props) {
     
     const [monthName, setMonthName] = useState("");
     const [amount, setAmount] = useState(0);
@@ -68,6 +68,7 @@ function HandlingMonth() {
         axios.post("http://localhost:9090/api-handling-month/handling-month", handlingMonthData).then(
             response => {
                 swal("Success", "Amount Saved!", "success");
+                props.setIsCurrMonthDataAdded(true);
                 console.log("Login successful:", response.data);
             }).catch(error=>{
                 console.log("Error getting",error);
