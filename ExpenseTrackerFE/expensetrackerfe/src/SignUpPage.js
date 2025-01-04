@@ -268,7 +268,10 @@ function SignUpPage(props) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-
+    const handlePaste = (evt) => {
+        evt.preventDefault();
+        swal("Error","Text pasting is not allowed for confirm password","error");
+    }
 
 
     return (
@@ -340,6 +343,7 @@ function SignUpPage(props) {
                                 placeholder="Enter Confirm Password"
                                 onChange={handleConfirmPassword}
                                 value={confirmPassword}
+                                onPaste={handlePaste}
                             />
                             {!isIconClickedConfirmPassWord ?
                                 <img src={hideConfirmPass} alt="hide" className="password-icon" onClick={handleIconClickingConfirmPass} /> : <img src={viewConfirmPass} alt="view confirm password" className="password-icon" onClick={handleIconClickingConfirmPass} />}
