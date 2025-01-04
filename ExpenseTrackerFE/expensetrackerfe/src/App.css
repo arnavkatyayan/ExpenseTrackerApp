@@ -37,12 +37,16 @@
   }
 }
 .expense-tracker {
-  height: 100vh;
-  background-color: lightcyan;
+    height: 90vh;
+    justify-content: center;
+    background-color: lightcyan;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.expense-tracker-showtable {
   display: flex;
-  align-items: center;
   justify-content: center;
-  position: relative;
 }
 .login-page {
   height: 50vh;
@@ -53,13 +57,18 @@
   justify-content: center;
   padding: 20px;
 }
+.login-page-data {
+  background-color: rgb(152, 92, 13);
+}
+.login-page-table {
+  height: 77vh;
+  width: 60vw;
+  background-color: rgb(152, 92, 13);
+  display: flex;
+  padding: 20px;
+}
 .labels {
   font-weight: 700;
-}
-.btn-grps {
-  display: flex;
-  gap: 20px;
-  margin-top: 10px;
 }
 .new-user {
   display: flex;
@@ -84,6 +93,10 @@
 .input-field {
   width: 100%;
   padding-right: 40px;
+}
+
+.input-field {
+  width: 100%;
 }
 
 .input-wrapper {
@@ -157,9 +170,7 @@
 }
 .sign-up-inputs {
   margin-top: -30px;
-  display: flex;
-  flex-direction: column;
-  gap:1px;
+  height: 75vh;
 }
 /* Ensure SweetAlert container is centered */
 .swal-overlay {
@@ -193,18 +204,17 @@
   gap:5px;
 }
 .show-table {
-  width: 60vw;
+  width: 56vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height:70vh;
 }
 
 .table-wrapper {
   width: 100%;
   max-width: 800px;
-  max-height: 300px;
+  max-height: 250px;
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -227,29 +237,80 @@
   background-color: #555;
 }
 
-.form-selection {
-  margin-bottom: 20px; /* Adds space below checkbox */
+.download-report-row {
+  display: flex;
+  padding: 10px;
+  width: 127vh;  
+}
+
+.report-label {
+  font-weight: bold !important;
+  font-size: 1.0rem; 
 }
 .form-selection label {
   font-weight: 500;
+}
+.row-inline{
+  padding: 10px;
+}
+.expense {
+  font-weight: bold;  
+  font-size: 2rem;   
+  margin-top: -15px;
+}
+.SalAndBal{
+  font-weight: bold;  
+  font-size: 1rem;   
+  margin: 0;
+}
+.add-expense{
+  margin-bottom: 1rem !important;
+  padding: 0px 10px;
 }
 
 .btn-grps {
   display: flex;
   gap: 20px;
+  margin-top: 30px;
+  justify-content: center;
+}
+.btn-grps-Expense {
+  display: flex;
+  gap: 20px;
+  margin-top: 32px;
+  justify-content: center;
+  margin-left: -20px;
+}
+.btn-grps-downRpt {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+.btn-grps-SecRow{
+  display: flex;
+  gap: 20px;
   margin-top: 10px;
 }
-.heading{
+.heading {
+  display: flex; 
+  align-items: center; 
   height: 10vh;
   background-color: lightsalmon;
+  padding: 0 1rem;
 }
 .heading-name {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 60%;
   font-weight: 500;
-  padding-top: 8px;
+  margin: 0;
+  text-align: center;
 }
+
+.date-time {
+  font-size: 1rem;
+  margin-left: 45px;
+  margin-top: 15px;
+}
+
 .footer {
   text-align: center;
   padding: 10px;
@@ -259,9 +320,6 @@
   bottom: 0;
 }
 .logout-btn {
- 
-  right: 7px;
-  position: absolute;
-  /* padding-top: 5px; */
-  margin-top: -47px;
+  margin-top: 0px;
+  margin-left: 15px;
 }

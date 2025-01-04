@@ -327,7 +327,7 @@ function SignUpPage(props) {
                                 value={password}
                             />
                             {!isIconClicked ?
-                                <img src={hide} alt="hide" className="password-icon" onClick={handleIconClicking} /> : <img src={view} className="password-icon" onClick={handleIconClicking} />}
+                                <img src={hide} alt="hide" className="password-icon" onClick={handleIconClicking} /> : <img src={view} alt="view password" className="password-icon" onClick={handleIconClicking} />}
                         </div>
                         {errPassword ? <p className="validation-warning">Please enter the password</p> : null}
                     </Form.Group>
@@ -342,7 +342,7 @@ function SignUpPage(props) {
                                 value={confirmPassword}
                             />
                             {!isIconClickedConfirmPassWord ?
-                                <img src={hideConfirmPass} alt="hide" className="password-icon" onClick={handleIconClickingConfirmPass} /> : <img src={viewConfirmPass} className="password-icon" onClick={handleIconClickingConfirmPass} />}
+                                <img src={hideConfirmPass} alt="hide" className="password-icon" onClick={handleIconClickingConfirmPass} /> : <img src={viewConfirmPass} alt="view confirm password" className="password-icon" onClick={handleIconClickingConfirmPass} />}
                         </div>
                         {errConfirmPassword ? <p className="validation-warning">Please enter the confirm password</p> : null}
                     </Form.Group>

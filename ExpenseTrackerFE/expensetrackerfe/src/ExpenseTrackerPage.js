@@ -5,8 +5,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ShowTable from './showTable';
 import swal from 'sweetalert';
 import axios from 'axios';
+import { Row, Col} from 'react-bootstrap';
+import Select from 'react-select';
 
 function ExpenseTrackerPage(props) {
+    const [currMonthSalary, setCurrMonthSalary] = useState(0);
+    const [difference, setDifference] = useState(0);
+    const [selectedOption, setSelectedOption] = useState(null);
     const [expenseName, setExpenseName] = useState("");
     const [expenseAmount, setExpenseAmount] = useState("");
     const [errExpenseName, setErrExpenseName] = useState(false);
@@ -15,13 +20,30 @@ function ExpenseTrackerPage(props) {
     const [showTable, setShowTable] = useState(false);
     const [monthName, setMonthName] = useState("");
     const [currentDate, setCurrentDate] = useState("");
-    const [currentDateInTS, setCurrentDateInTS] = useState(0);
     const [isEditable, setIsEditable] = useState(false);
     const [editableIndex, setEditableIndex] = useState(-1);
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
+    const monthOptions = [
+        { value: 'January', label: 'January' },
+        { value: 'February', label: 'February' },
+        { value: 'March', label: 'March' },
+        { value: 'April', label: 'April' },
+        { value: 'May', label: 'May' },
+        { value: 'June', label: 'June' },
+        { value: 'July', label: 'July' },
+        { value: 'August', label: 'August' },
+        { value: 'September', label: 'September' },
+        { value: 'October', label: 'October' },
+        { value: 'November', label: 'November' },
+        { value: 'December', label: 'December' }
+    ];
+
+    const handleSelectChange = (option) => {
+        setSelectedOption(option);
+    };
 
     const handleExpenseAmount = (evt) => {
         setExpenseAmount(evt.target.value);
@@ -36,6 +58,49 @@ function ExpenseTrackerPage(props) {
         return date.getTime();
     }
 
+
+    const getDifference = async () => {
+
+        const fetchedExpense = await handleSalary();
+        const fetchedSalary = await getCurrentMonthSalary();
+
+        const calculatedDifference = fetchedSalary - fetchedExpense;
+
+        setCurrMonthSalary(fetchedSalary);
+        setDifference(calculatedDifference);
+    };
+
+
+    // Fetches total expense for the selected month
+    const handleSalary = async () => {
+        if (selectedOption) {
+            const response = await axios.get(`http://localhost:9090/api-expenseTracker/getFinalSalary/${selectedOption.value}`);
+            return response.data; // Return the fetched data
+        }else{
+            const response = await axios.get(`http://localhost:9090/api-expenseTracker/getFinalSalary/January`);
+            return response.data; // Return the fetched data
+        }
+    };
+
+    // Fetches the current month's salary
+    const getCurrentMonthSalary = async () => {
+        if (selectedOption) {
+            const response = await axios.get(`http://localhost:9090/api-handling-month/getCurrMonthSal/${selectedOption.value}`);
+            return response.data; // Return the fetched data
+        }else{
+            const response = await axios.get(`http://localhost:9090/api-handling-month/getCurrMonthSal/January`);
+            return response.data; // Return the fetched data
+        }
+    };
+
+    useEffect(() => {
+        getMonthName();
+        fetchExpenseList();
+        getCurrentDate();
+        getDifference();
+    // handleTable();
+    }, []); // Empty dependency array ensures this runs only once on page load
+    
     const getMonthName = () => {
         const date = new Date();
         const currentMonth = months[date.getMonth()];
@@ -43,13 +108,13 @@ function ExpenseTrackerPage(props) {
     }
 
     useEffect(() => {
-        getMonthName();
-        fetchExpenseList();
-        getCurrentDate();
-    // handleTable();
-    }, []);
+        getDifference();
+    }, [selectedOption]);
 
-    
+    useEffect(() => {
+            const defaultOption = monthOptions.find(option => option.value === props.currentMonth);
+            setSelectedOption(defaultOption);
+        }, [props.currentMonth]);
 
     const columns = useMemo(
         () => [
@@ -60,7 +125,7 @@ function ExpenseTrackerPage(props) {
                 Header: 'Actions',
                 accessor: 'actions',
                 Cell: ({ row }) => (
-                    <div className='btn-grps'>
+                    <div className='btn-grps-Expense'>
                         <Button variant="warning" onClick={() => handleEdit(row.index)}>Edit</Button>
                         <Button variant="danger" onClick={() => handleDelete(row.index)}>Delete</Button>
                     </div>
@@ -200,7 +265,7 @@ function ExpenseTrackerPage(props) {
     const handleTable = async () => {
       
         const response = await axios("http://localhost:9090/api-expenseTracker/isTableEmpty")
-        if(response.data == false) {
+        if(response.data === false) {
             setShowTable(true);
         }
         else {
@@ -227,62 +292,76 @@ function ExpenseTrackerPage(props) {
 
     return (
         <div className="expense-tracker">
-            {!showTable ? (
                 <div className="login-page-table">
                     <Form onSubmit={handleExpense}>
-                        <Form.Group className="mb-3 input-container" controlId="formBasicDate">
-                            <Form.Label className="labels">Date</Form.Label>
-                            <Form.Control
-                                className="input-field disabled-input"
-                                type="text"
-                                disabled
-                                value={currentDate}
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3 input-container" controlId="formBasicExpenseName">
-                            <Form.Label className="labels">Expense Name</Form.Label>
-                            <Form.Control
-                                className="input-field"
-                                type="text"
-                                onChange={handleExpenseType}
-                                value={expenseName}
-                                placeholder="Enter Expense Type"
-                            />
-                            {errExpenseName && <div className='validation-warning'>Please Enter the Expense Name</div>}
-                        </Form.Group>
-
-                        <Form.Group className="mb-3 input-container" controlId="formBasicExpenseAmount">
-                            <Form.Label className="labels">Expense Amount</Form.Label>
-                            <div className="input-wrapper">
-                                <Form.Control
-                                    className="input-field password-input"
-                                    type="number"
-                                    placeholder="Enter Amount"
-                                    value={expenseAmount}
-                                    onChange={handleExpenseAmount}
-                                />
+                        <Row className="row-inline">
+                            <Col md="8"><Form.Label className="expense">Add an Expense </Form.Label> </Col>
+                            <Col md="4"><div className="SalAndBal">Salary: {currMonthSalary} | Balance: {difference}</div></Col>        
+                        </Row>
+                        <Row className="add-expense" >
+                            <Col md={3}>
+                                <Form.Group className="input-container" controlId="formBasicExpenseName">
+                                    <Form.Label className="labels">Expense Name</Form.Label>
+                                    <Form.Control
+                                        className="input-field"
+                                        type="text"
+                                        onChange={handleExpenseType}
+                                        value={expenseName}
+                                        placeholder="Enter Expense Type"
+                                    />
+                                    {errExpenseName && (
+                                        <div className="validation-warning">Please Enter the Expense Name</div>
+                                    )}
+                                </Form.Group>
+                            </Col>
+                            <Col md={3}>
+                                <Form.Group className="input-container" controlId="formBasicExpenseAmount">
+                                    <Form.Label className="labels">Expense Amount</Form.Label>
+                                    <div className="input-wrapper">
+                                        <Form.Control
+                                            className="input-field password-input"
+                                            type="number"
+                                            placeholder="Enter Amount"
+                                            value={expenseAmount}
+                                            onChange={handleExpenseAmount}
+                                        />
+                                    </div>
+                                    {errExpenseAmount && (
+                                        <p className="validation-warning">Amount must be greater than 0</p>
+                                    )}
+                                </Form.Group>
+                            </Col>
+                            <Col md={3}>
+                            <div className="btn-grps-Expense">
+                                <Button variant="success" type="submit" style={{ marginLeft: '-35px' }}>
+                                        {!isEditable ? "Add" : "Update "}
+                                </Button>
+                                <Button variant="primary" type="button" onClick={handleReset}>
+                                    Reset
+                                </Button>
                             </div>
-                            {errExpenseAmount && <p className="validation-warning">Amount must be greater than 0</p>}
-                        </Form.Group>
+                            </Col>
+                            <Col md={3} >
+                                <Form.Label className="labels">Expenses (monthly)</Form.Label>
+                                <Select
+                                    value={selectedOption}
+                                    onChange={handleSelectChange}
+                                    options={monthOptions}
+                                    className="input-field-month"
+                                    placeholder="Select month"
+                                />
+                            </Col>
+                        </Row>
 
-                        <div className="btn-grps">
-                            <Button variant="success" type="button" onClick={() => {
-                                handleTable();
-                            }}>
-                                Show Table
-                            </Button>
-                            <Button variant="success" type="submit">
-                                {!isEditable ? "Save" : "Update"}
-                            </Button>
-                            <Button variant="primary" type="button" onClick={handleReset}>
-                                Reset
-                            </Button>
-                        </div>
+                        <ShowTable 
+                            data={expenseList}
+                            columns={columns}
+                            showTable={showTable}
+                            months={months}
+                            setShowTable={setShowTable}
+                            currentMonth={monthName} />
                     </Form>
                 </div>
-            ) : (
-                <ShowTable data={expenseList} columns={columns} showTable={showTable} months={months} setShowTable={setShowTable} currentMonth={monthName} />
-            )}
         </div>
     );
 }

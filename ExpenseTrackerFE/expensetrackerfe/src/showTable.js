@@ -2,18 +2,12 @@ import React, { useState, useEffect } from "react";
 import ReactTableComponent from "./ReactTableComponent";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
-import Select from 'react-select';
 import swal from "sweetalert";
+import { Row, Col} from 'react-bootstrap';
 function ShowTable(props) {
-    const [totalExpense, setTotalExpense] = useState(0);
-    const [currMonthSalary, setCurrMonthSalary] = useState(0);
-    const [difference, setDifference] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);
     const [saveToPc, setSaveToPc] = useState(false);
     const [sendToMail, setSendToMail] = useState(false);
-    const [isShowSalaryClicked, setIsShowSalaryClicked] = useState(false);
-    const [currentState,setCurrentState] = useState("");
-    const [savings,setSavings] = useState(0);//this variable is for past months savings.
     const monthOptions = [
         { value: 'January', label: 'January' },
         { value: 'February', label: 'February' },
@@ -34,67 +28,12 @@ function ShowTable(props) {
         setSelectedOption(defaultOption);
     }, [props.currentMonth]);
 
-    const handleSelectChange = (option) => {
-        setSelectedOption(option);
-    };
-
     const handleSaveToPC = () => {
         setSaveToPc(!saveToPc);
     };
 
     const handleSendToMail = () => {
         setSendToMail(!sendToMail);
-    };
-
-    const handleBack = () => {
-        props.setShowTable(false);
-    };
-
-    // Fetches total expense for the selected month
-    const handleSalary = async () => {
-        if (selectedOption) {
-            const response = await axios.get(`http://localhost:9090/api-expenseTracker/getFinalSalary/${selectedOption.value}`);
-            return response.data; // Return the fetched data
-        }
-        return 0;
-    };
-
-    // Fetches the current month's salary
-    const getCurrentMonthSalary = async () => {
-        if (selectedOption) {
-            const response = await axios.get(`http://localhost:9090/api-handling-month/getCurrMonthSal/${selectedOption.value}`);
-            return response.data; // Return the fetched data
-        }
-        return 0;
-    };
-
-    // Updates the state and calculates the difference
-    const getDifference = async () => {
-        getMonthDetail();
-
-        // Update the salary information after currentState is updated
-        setIsShowSalaryClicked(true);
-
-        // Fetch both expense and salary data
-        const fetchedExpense = await handleSalary();
-        const fetchedSalary = await getCurrentMonthSalary();
-
-        // Calculate difference directly
-        const calculatedDifference = fetchedSalary - fetchedExpense;
-
-        // Set the state for totalExpense, currMonthSalary, and difference
-        setTotalExpense(fetchedExpense);
-        setCurrMonthSalary(fetchedSalary);
-        setDifference(calculatedDifference);
-    };
-
-    const handleReset = () => {
-        setTotalExpense(0);
-        setCurrMonthSalary(0);
-        setDifference(0);
-        setIsShowSalaryClicked(false);
-        setSaveToPc(false);
-        setSendToMail(false);
     };
 
     const handleSaveOptions = () => {
@@ -127,32 +66,9 @@ function ShowTable(props) {
         setSendToMail(false);
     }
 
-    const getMonthDetail = () => {
-        let ans = "";
-        let index = -1;
-        const date = new Date();
-
-        for (let i = 0; i < monthOptions.length; i++) {
-            if (selectedOption.value === monthOptions[i].value) {
-                index = i + 1;
-                break;
-            }
-        }
-
-        if (selectedOption.value === props.currentMonth) {
-            ans = "Current";
-        } else if (index < date.getMonth() + 1) { // +1 because getMonth() is zero-based
-            ans = "Savings";
-        } else {
-            ans = "Future";
-        }
-
-        setCurrentState(ans);
-    };
-
     return (
-        <div className="expense-tracker">
-            <div className="login-page show-table">
+        <div className="expense-tracker-showtable">
+            <div className="login-page-data show-table">
                 {/* Table Component */}
                 <div className="table-wrapper">
                     <ReactTableComponent
@@ -165,61 +81,42 @@ function ShowTable(props) {
                 {/* Checkbox Form */}
                 <div className="form-selection">
                     <Form>
-                        <Form.Group controlId="formBasicCheckbox">
-                            <Form.Check
-                                type="checkbox"
-                                label="Save To PC"
-                                className="input-field"
-                                onChange={handleSaveToPC}
-                                checked={saveToPc}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formBasicCheckbox">
-                            <Form.Check
-                                type="checkbox"
-                                label="Send To Email"
-                                className="input-field"
-                                onChange={handleSendToMail}
-                                checked={sendToMail}
-                            />
-                        </Form.Group>
+                        <Row className="download-report-row">
+                            <Col md="3">
+                                <Form.Label className="report-label">Download Report as</Form.Label>
+                            </Col>
+                            <Col md="3">
+                                <Form.Group controlId="formBasicCheckbox1">
+                                    <Form.Check
+                                        type="checkbox"
+                                        label="Save To PC"
+                                        className="input-field"
+                                        onChange={handleSaveToPC}
+                                        checked={saveToPc}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md="3">
+                                <Form.Group controlId="formBasicCheckbox2">
+                                    <Form.Check
+                                        type="checkbox"
+                                        label="Send To Email"
+                                        className="input-field"
+                                        onChange={handleSendToMail}
+                                        checked={sendToMail}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md="3">
+                                <div className="btn-grps-downRpt show-table-btns">
+                                    <Button variant="primary" type="button" onClick={handleSaveOptions}>
+                                    Download Report
+                                    </Button>
+                                </div>
+                            </Col>
+                        </Row>
                     </Form>
-
-                    {/* Month Dropdown */}
-                    <Select
-                        value={selectedOption}
-                        onChange={handleSelectChange}
-                        options={monthOptions}
-                        className="input-field"
-                        placeholder="Select the month"
-                    />
                 </div>
-
-                {/* Buttons Section */}
-                <div className="btn-grps show-table-btns">
-                    <Button variant="success" type="submit" onClick={handleBack}>
-                        Back
-                    </Button>
-                    <Button variant="primary" type="button" onClick={handleSaveOptions}>
-                        Save Options
-                    </Button>
-                    <Button variant="primary" type="button" onClick={handleReset}>
-                        Reset
-                    </Button>
-                    <Button variant="info" type="button" onClick={getDifference}>
-                        Show My Salary
-                    </Button>
-                </div>
-
-                {isShowSalaryClicked ? (
-                    currentState === "Current" ? (
-                        <h5>The current salary left for {props.currentMonth} month is: {difference}</h5>
-                    ) : currentState === "Savings" ? (
-                        <h5>The salary saved for {selectedOption.value} is {savings}.</h5>
-                    ) : currentState === "Future" ? (
-                        <h5>Information about future salary is not available.</h5>
-                    ) : null
-                ) : null}
             </div>
         </div>
     );
