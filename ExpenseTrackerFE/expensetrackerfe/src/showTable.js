@@ -75,6 +75,7 @@ function ShowTable(props) {
                         data={props.data}
                         columns={props.columns}
                         defaultPageSize={3}
+                        handleSorting={props.handleSorting}
                     />
                 </div>
 

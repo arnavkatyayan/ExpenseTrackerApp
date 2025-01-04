@@ -1,7 +1,9 @@
 import React from "react";
 import { useTable } from "react-table";
+import sortIcon from './sort.png';
 
-const ReactTableComponent = ({ data, columns }) => {
+const ReactTableComponent = (props) => {
+  const { data, columns } = props;
   const {
     getTableProps,
     getTableBodyProps,
@@ -20,7 +22,17 @@ const ReactTableComponent = ({ data, columns }) => {
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map(column => (
               <th {...column.getHeaderProps()} style={{ padding: "10px", border: "1px solid black" }}>
-                {column.render("Header")}
+                {(column.render("Header") === "Expense Amount" || column.render("Header") === "Date") ?
+                  (
+                    <>
+                      {column.render("Header")} <img src={sortIcon} alt="Sort Icon" onClick={() => props.handleSorting(column.render("Header"))} style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+                    </>
+                  ) :
+                  (
+                    column.render("Header")
+                  )
+                }
+
               </th>
             ))}
           </tr>

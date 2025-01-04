@@ -22,6 +22,8 @@ function ExpenseTrackerPage(props) {
     const [currentDate, setCurrentDate] = useState("");
     const [isEditable, setIsEditable] = useState(false);
     const [editableIndex, setEditableIndex] = useState(-1);
+    const [sortableField, setSortableField] = useState("ASC");
+
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -273,6 +275,38 @@ function ExpenseTrackerPage(props) {
         }
     }
 
+    const handleSorting = (field) => {
+        if (!field) return;
+
+        const sortedList = [...expenseList]; 
+        console.log(sortableField);
+        console.log(field);
+        if (sortableField === "ASC") {
+            sortedList.sort((a, b) => {
+                if (field === "Expense Amount") {
+                    return a.amount - b.amount;
+                } else if (field === "Date") {
+                    return new Date(a.date) - new Date(b.date);
+                }
+            });
+            setSortableField("DESC");
+        } else {
+            sortedList.sort((a, b) => {
+                if (field === "Expense Amount") {
+                    return b.amount - a.amount;
+
+                } else if (field === "Date") {
+                    return new Date(b.date) - new Date(a.date);
+
+                }
+            });
+            setSortableField("ASC");
+        }
+
+        setExpenseList(sortedList);
+    };
+    
+
     const handleReset = () => {
         setExpenseName("");
         setExpenseAmount("");
@@ -359,6 +393,7 @@ function ExpenseTrackerPage(props) {
                             showTable={showTable}
                             months={months}
                             setShowTable={setShowTable}
+                            handleSorting={handleSorting}
                             currentMonth={monthName} />
                     </Form>
                 </div>
