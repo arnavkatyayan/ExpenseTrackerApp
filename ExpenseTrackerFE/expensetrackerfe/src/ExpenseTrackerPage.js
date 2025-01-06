@@ -15,12 +15,13 @@ function ExpenseTrackerPage(props) {
     const [expenseAmount, setExpenseAmount] = useState("");
     const [errExpenseName, setErrExpenseName] = useState(false);
     const [errExpenseAmount, setErrExpenseAmount] = useState(false);
+    const [copyExpenseList, setCopyExpenseList] = useState([]);
     const [showTable, setShowTable] = useState(false);
     const [monthName, setMonthName] = useState("");
     const [isEditable, setIsEditable] = useState(false);
     const [editableIndex, setEditableIndex] = useState(-1);
     const [sortableField, setSortableField] = useState("ASC");
-
+    const [search, setSearch] = useState("");
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -46,6 +47,21 @@ function ExpenseTrackerPage(props) {
         return date.getTime();
     }
 
+    const handleSearch = (evt) => {
+        const searchItem = evt.target.value.trim();  // Trim whitespace from user input
+        setSearch(searchItem);  // Update the search state with the trimmed value
+
+        if (searchItem === "") {
+            setExpenseList(copyExpenseList);  // Reset to the full list when search is empty
+        } else {
+            const searchList = copyExpenseList.filter((item) =>
+                item.amount.toString().includes(searchItem) ||
+                item.name.toLowerCase().includes(searchItem.toLowerCase()) ||
+                item.date.includes(searchItem)
+            );
+            setExpenseList(searchList);  // Update with filtered results
+        }
+    };
 
     const getDifference = async () => {
 
@@ -172,6 +188,7 @@ function ExpenseTrackerPage(props) {
             }));
             console.log("Fetched Expense Data: ", expenseData);
             setExpenseList(expenseData);
+            setCopyExpenseList(expenseData);
         } catch (error) {
             console.error("Error fetching expenses:", error);
         }
@@ -269,8 +286,6 @@ function ExpenseTrackerPage(props) {
         if (!field) return;
 
         const sortedList = [...expenseList]; 
-        console.log(sortableField);
-        console.log(field);
         if (sortableField === "ASC") {
             sortedList.sort((a, b) => {
                 if (field === "Expense Amount") {
@@ -320,6 +335,7 @@ function ExpenseTrackerPage(props) {
                     <Form onSubmit={handleExpense}>
                         <Row className="row-inline">
                             <Col md="8"><Form.Label className="expense">Add an Expense </Form.Label> </Col>
+                           <Col md="5"><Form.Control className='search-box' type="search" placeholder='Search Expense' onChange={handleSearch} value={search}/></Col>
                             <Col md="4"><div className="SalAndBal">Salary: {currMonthSalary} | Balance: {difference}</div></Col>        
                         </Row>
                         <Row className="add-expense" >
