@@ -11,15 +11,12 @@ import Select from 'react-select';
 function ExpenseTrackerPage(props) {
     const [currMonthSalary, setCurrMonthSalary] = useState(0);
     const [difference, setDifference] = useState(0);
-    const [selectedOption, setSelectedOption] = useState(null);
     const [expenseName, setExpenseName] = useState("");
     const [expenseAmount, setExpenseAmount] = useState("");
     const [errExpenseName, setErrExpenseName] = useState(false);
     const [errExpenseAmount, setErrExpenseAmount] = useState(false);
-    const [expenseList, setExpenseList] = useState([]);
     const [showTable, setShowTable] = useState(false);
     const [monthName, setMonthName] = useState("");
-    const [currentDate, setCurrentDate] = useState("");
     const [isEditable, setIsEditable] = useState(false);
     const [editableIndex, setEditableIndex] = useState(-1);
     const [sortableField, setSortableField] = useState("ASC");
@@ -28,24 +25,13 @@ function ExpenseTrackerPage(props) {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    const monthOptions = [
-        { value: 'January', label: 'January' },
-        { value: 'February', label: 'February' },
-        { value: 'March', label: 'March' },
-        { value: 'April', label: 'April' },
-        { value: 'May', label: 'May' },
-        { value: 'June', label: 'June' },
-        { value: 'July', label: 'July' },
-        { value: 'August', label: 'August' },
-        { value: 'September', label: 'September' },
-        { value: 'October', label: 'October' },
-        { value: 'November', label: 'November' },
-        { value: 'December', label: 'December' }
-    ];
 
-    const handleSelectChange = (option) => {
-        setSelectedOption(option);
-    };
+    const currentDate = new Date();
+    const currentMonth = (`0${currentDate.getMonth() + 1}`).slice(-2); // Months are zero-based
+    const currentYear = currentDate.getFullYear().toString();
+    const [expenseList, setExpenseList] = useState([]);
+    const [selectedMonth, setSelectedMonth] = useState(currentMonth); // January
+    const [selectedYear, setSelectedYear] = useState(currentYear); //2025
 
     const handleExpenseAmount = (evt) => {
         setExpenseAmount(evt.target.value);
@@ -63,8 +49,10 @@ function ExpenseTrackerPage(props) {
 
     const getDifference = async () => {
 
-        const fetchedExpense = await handleSalary();
-        const fetchedSalary = await getCurrentMonthSalary();
+        const originalMonthName = months[parseInt(selectedMonth) - 1];
+
+        const fetchedExpense = await handleSalary(originalMonthName);
+        const fetchedSalary = await getCurrentMonthSalary(originalMonthName);
 
         const calculatedDifference = fetchedSalary - fetchedExpense;
 
@@ -74,49 +62,29 @@ function ExpenseTrackerPage(props) {
 
 
     // Fetches total expense for the selected month
-    const handleSalary = async () => {
-        if (selectedOption) {
-            const response = await axios.get(`http://localhost:9090/api-expenseTracker/getFinalSalary/${selectedOption.value}`);
-            return response.data; // Return the fetched data
-        }else{
-            const response = await axios.get(`http://localhost:9090/api-expenseTracker/getFinalSalary/January`);
-            return response.data; // Return the fetched data
-        }
+    const handleSalary = async (originalMonthName) => {
+            const response = await axios.get(`http://localhost:9090/api-expenseTracker/getFinalSalary/${originalMonthName}`);
+            return response.data;
     };
 
     // Fetches the current month's salary
-    const getCurrentMonthSalary = async () => {
-        if (selectedOption) {
-            const response = await axios.get(`http://localhost:9090/api-handling-month/getCurrMonthSal/${selectedOption.value}`);
-            return response.data; // Return the fetched data
-        }else{
-            const response = await axios.get(`http://localhost:9090/api-handling-month/getCurrMonthSal/January`);
-            return response.data; // Return the fetched data
-        }
+    const getCurrentMonthSalary = async (originalMonthName) => {
+            const response = await axios.get(`http://localhost:9090/api-handling-month/getCurrMonthSal/${originalMonthName}`);
+            return response.data;
     };
 
     useEffect(() => {
-        getMonthName();
         fetchExpenseList();
         getCurrentDate();
         getDifference();
     // handleTable();
-    }, []); // Empty dependency array ensures this runs only once on page load
+    }, []);
     
-    const getMonthName = () => {
-        const date = new Date();
-        const currentMonth = months[date.getMonth()];
-        setMonthName(currentMonth);
-    }
 
     useEffect(() => {
+        fetchExpenseList();
         getDifference();
-    }, [selectedOption]);
-
-    useEffect(() => {
-            const defaultOption = monthOptions.find(option => option.value === props.currentMonth);
-            setSelectedOption(defaultOption);
-        }, [props.currentMonth]);
+    }, [selectedMonth]);
 
     const columns = useMemo(
         () => [
@@ -180,10 +148,18 @@ function ExpenseTrackerPage(props) {
         }
     };
 
-    const getDateFromTS = (date) => {
-        const conversion = new Date(date);
-        return conversion.toLocaleDateString();
-    }
+    // Helper function to convert timestamp to date string in 'dd/mm/yyyy' format
+    const getDateFromTS = (timestamp) => {
+        const date = new Date(timestamp);
+        const day = (`0${date.getDate()}`).slice(-2);
+        const month = (`0${date.getMonth() + 1}`).slice(-2); // Months are zero-based
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    useEffect(() => {
+        fetchExpenseList();
+    }, [selectedMonth, selectedYear]); 
 
     const fetchExpenseList = async () => {
         try {
@@ -200,6 +176,20 @@ function ExpenseTrackerPage(props) {
             console.error("Error fetching expenses:", error);
         }
     };
+
+    // Function to filter data based on selected month and year
+    const filterDataByMonthYear = (data, month, year) => {
+        return data.filter(item => {
+            const [day, monthStr, yearStr] = item.date.split('/');
+            return monthStr === month && yearStr === year;
+        });
+    };
+
+    // Memoize the filtered data to avoid unnecessary recalculations
+    const filteredData = useMemo(() => {
+        const filtered = filterDataByMonthYear(expenseList, selectedMonth, selectedYear);
+        return filtered;
+    }, [expenseList, selectedMonth, selectedYear]);
 
     const handleExpense = (event) => {
         event.preventDefault();
@@ -321,7 +311,7 @@ function ExpenseTrackerPage(props) {
         const month = date.getMonth();
         const year = date.getFullYear();
         const fullDate = day+"-"+month+"-"+year;
-        setCurrentDate(fullDate);
+        //setCurrentDate(fullDate);
     }
 
     return (
@@ -375,20 +365,36 @@ function ExpenseTrackerPage(props) {
                                 </Button>
                             </div>
                             </Col>
-                            <Col md={3} >
-                                <Form.Label className="labels">Expenses (monthly)</Form.Label>
-                                <Select
-                                    value={selectedOption}
-                                    onChange={handleSelectChange}
-                                    options={monthOptions}
-                                    className="input-field-month"
-                                    placeholder="Select month"
-                                />
+                            <Col md={2} >
+                                <Form.Label className="labels">month</Form.Label>
+                                <select style={{height:'30px'}} value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                                    <option value="01">January</option>
+                                    <option value="02">February</option>
+                                    <option value="03">March</option>
+                                    <option value="04">April</option>
+                                    <option value="05">May</option>
+                                    <option value="06">June</option>
+                                    <option value="07">July</option>
+                                    <option value="08">August</option>
+                                    <option value="09">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
                             </Col>
+                            <Col md={1} >
+                                <Form.Label className="labels">year</Form.Label>
+                                <select style={{height:'30px'}} value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    {/* Add more years as needed */}
+                                </select>
+                            </Col>
+
                         </Row>
 
                         <ShowTable 
-                            data={expenseList}
+                            data={filteredData}
                             columns={columns}
                             showTable={showTable}
                             months={months}
@@ -402,3 +408,5 @@ function ExpenseTrackerPage(props) {
 }
 
 export default ExpenseTrackerPage;
+
+
