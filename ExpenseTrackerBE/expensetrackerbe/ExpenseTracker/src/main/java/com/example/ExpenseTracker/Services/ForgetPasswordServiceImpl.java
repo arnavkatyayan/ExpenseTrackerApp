@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.ExpenseTracker.Entity.ExpenseTrackerEntity;
@@ -23,6 +25,13 @@ public class ForgetPasswordServiceImpl implements ForgetPasswordService {
 
 	@Autowired
 	SignupRepo signuprepo;
+	
+	private final PasswordEncoder passwordEncoder;
+	
+	public ForgetPasswordServiceImpl() {
+		this.passwordEncoder = new BCryptPasswordEncoder();
+	}
+	
 	 @Autowired
 	private JavaMailSender mailSender; 
 	 
@@ -55,13 +64,17 @@ public class ForgetPasswordServiceImpl implements ForgetPasswordService {
 	    }
 	}
 	
+	public String encodePassword(String password) {
+		return passwordEncoder.encode(password);
+	}
+	
 	public void saveToDB(String pass, String email) {
 	    if (signuprepo.existsByEmail(email)) {
 	        // Fetch the existing user by email
 	        SignupEntity signupEntity = signuprepo.findByEmail(email);
 	        
 	        // Update the password
-	        signupEntity.setPassword(pass);
+	        signupEntity.setPassword(encodePassword(pass));
 	        
 	        // Save the updated entity to the repository
 	        signuprepo.save(signupEntity);

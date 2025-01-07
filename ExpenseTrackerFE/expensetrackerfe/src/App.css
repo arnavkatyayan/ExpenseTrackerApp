@@ -199,7 +199,7 @@
 }
 .forget-pass {
   margin-left: 14px;
-  margin-top:16px;
+  margin-top:16px !important;
   display: flex;
   gap:5px;
 }
