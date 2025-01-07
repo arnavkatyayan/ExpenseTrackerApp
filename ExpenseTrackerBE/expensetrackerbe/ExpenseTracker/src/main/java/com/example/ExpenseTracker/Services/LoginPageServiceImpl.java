@@ -3,6 +3,8 @@ package com.example.ExpenseTracker.Services;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.ExpenseTracker.Entity.SignupEntity;
@@ -11,6 +13,12 @@ import com.example.ExpenseTracker.Repository.SignupRepo;
 
 @Service
 public class LoginPageServiceImpl implements LoginPageService {
+	
+	private final PasswordEncoder passwordEncoder;
+	
+	public LoginPageServiceImpl() {
+		this.passwordEncoder = new BCryptPasswordEncoder();
+	}
 
 	@Autowired
 	SignupRepo signUpRepo;
@@ -30,7 +38,7 @@ public class LoginPageServiceImpl implements LoginPageService {
 		SignupEntity signup = signUpRepo.findByUsername(Username);
 		String user = signup.getUsername();
 		String pass = signup.getPassword();
-		if (Username.equals(user) && Password.equals(pass)) {
+		if (Username.equals(user) && verifyPassword(Password,pass)) {
 			//resetBlock(Username);
 			return true;
 			
@@ -44,6 +52,10 @@ public class LoginPageServiceImpl implements LoginPageService {
 			}
 			return false;
 		}
+	}
+	
+	public Boolean verifyPassword(String password, String hashedPassword) {
+			return passwordEncoder.matches(password, hashedPassword); 
 	}
 
 	public void resetBlock(String username) {
