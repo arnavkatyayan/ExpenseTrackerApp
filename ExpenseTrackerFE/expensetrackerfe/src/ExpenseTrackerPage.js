@@ -144,9 +144,9 @@ function ExpenseTrackerPage(props) {
     const handleDelete = async (index) => {
         try {
             if (expenseList.length > 0 && index >= 0 && index < expenseList.length) {
+                console.log(expenseList[index]);
                 const expenseId = expenseList[index].expenseId;
-                console.log("Deleting expense with ID:", expenseId);
-
+                setDifference((prevState) => prevState + expenseList[index].amount);
                 // Perform the delete request
                 await axios.delete(`http://localhost:9090/api-expenseTracker/deleteExpense/${expenseId}`);
 
