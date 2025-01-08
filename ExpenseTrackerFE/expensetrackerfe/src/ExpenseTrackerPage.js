@@ -208,9 +208,15 @@ function ExpenseTrackerPage(props) {
         return filtered;
     }, [expenseList, selectedMonth, selectedYear]);
 
+    const getMonthName = () => {
+            const date = new Date();
+            let month = date.getMonth();
+            setMonthName(months[month]);
+            return months[month];
+    }
+
     const handleExpense = (event) => {
         event.preventDefault();
-        console.log(expenseList);
         // Reset error states
         setErrExpenseName(false);
         setErrExpenseAmount(false);
@@ -231,13 +237,14 @@ function ExpenseTrackerPage(props) {
             const expenseTrackerData = {
                 expenseName: expenseName,
                 expenseAmount: Number(expenseAmount),
-                monthName: monthName,
+                monthName: getMonthName(),
                 expenseId: editableIndex,
                 expenseDate: getCurrentDateInTS()
             };
             axios.post("http://localhost:9090/api-expenseTracker/saveExpense", expenseTrackerData)
                 .then(response => {
                     swal("Success!", "Expense Data Saved!", "success");
+                    setDifference((prev)=>prev-expenseAmount);
                     fetchExpenseList();  // Fetch updated expenses after saving
                     
                 })
@@ -252,13 +259,14 @@ function ExpenseTrackerPage(props) {
             const expenseTrackerData = {
                 expenseName: expenseName,
                 expenseAmount: Number(expenseAmount),
-                monthName: monthName,
+                monthName: getMonthName(),
                 expenseDate: getCurrentDateInTS()
             };
             axios.put(`http://localhost:9090/api-expenseTracker/updateExpense/${editableIndex}`, expenseTrackerData)
 
                 .then(response => {
                     swal("Success!", "Expense Data Updated!", "success");
+                    setDifference((prev)=>prev-expenseAmount);
                     fetchExpenseList();  // Fetch updated expenses after saving
                     setIsEditable(false);
                 })
