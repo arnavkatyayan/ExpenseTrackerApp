@@ -2,13 +2,17 @@ import './App.css';
 import LoginPage from './LoginPage';
 import { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-
+import ChangePasswordPage from './ChangePasswordPage';
 function App() {
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState("");
-
+  const [isChangePassClicked, setIsChangePassClicked] = useState(false);
   const handleLogout = () => {
     setIsLogoutClicked(!isLogoutClicked);
+  }
+
+  const handleChangePass = () => {
+    setIsChangePassClicked(!isChangePassClicked);
   }
 
   useEffect(() => {
@@ -24,15 +28,22 @@ function App() {
     return () => clearInterval(interval); // Cleanup interval on component unmount
 }, []);
 
+  // if(isChangePassClicked) {
+  //   <ChangePasswordPage/>
+  // }
+
   return (
     <div>
       <div className='heading'>
             <h1 className='heading-name'>Expense Tracker</h1>
             <p className="date-time">{currentDateTime}</p>
+            {/* {isChangePassClicked ? <Button variant="danger" type="button" className='logout-btn' onClick={handleChangePass}>Change Password</Button>:null} */}
+            <Button variant="danger" type="button" className='logout-btn' onClick={handleChangePass}>{!isChangePassClicked ? "Change Password" : "Go Back"}</Button>
             {isLogoutClicked ? <Button variant="danger" type="button" className='logout-btn' onClick={handleLogout}>Logout</Button> : null}
       </div>
 
-      <LoginPage isLogoutClicked={isLogoutClicked} setIsLogoutClicked={setIsLogoutClicked} />
+      <LoginPage isLogoutClicked={isLogoutClicked} setIsLogoutClicked={setIsLogoutClicked} isChangePassClicked={isChangePassClicked} setIsChangePassClicked={setIsChangePassClicked} />
+      {/* <ChangePasswordPage/> */}
       <footer className='footer'>
         <p>2025.1.2</p>
       </footer>

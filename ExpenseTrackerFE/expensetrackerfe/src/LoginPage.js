@@ -10,6 +10,8 @@ import HandlingMonth from "./HandlingMonth";
 import swal from "sweetalert";
 import ExpenseTrackerPage from "./ExpenseTrackerPage";
 import ForgetPasswordPage from "./ForgetPasswordPage";
+import ChangePasswordPage from "./ChangePasswordPage";
+
 function LoginPage(props) {
 
     const [userName, setUserName] = useState("");
@@ -122,6 +124,7 @@ function LoginPage(props) {
             swal("Success!", "Login Successful", "success");
             setIsLoggedIn(true);
             props.setIsLogoutClicked(true);
+     //       props.setIsChangePassClicked(true);
             console.log("Login successful:", response.data);
         } catch (error) {
             if (error.response && error.response.status === 401) {
@@ -155,10 +158,13 @@ function LoginPage(props) {
         }
     };
 
+    if(props.isChangePassClicked) {
+        return <ChangePasswordPage userName={userName}/>
+    }
 
     if(isLoggedIn && props.isLogoutClicked === true) {
         
-        return isCurrMonthDataAdded ? <ExpenseTrackerPage userName={userName} logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked}/>:<HandlingMonth logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked} setIsCurrMonthDataAdded={setIsCurrMonthDataAdded}/>
+        return isCurrMonthDataAdded ? <ExpenseTrackerPage userName={userName} logout={props.isLogoutClicked} changePassword={props.isChangePassClicked} setChangePassword={props.setIsChangePassClicked}  setLogout={props.setIsLogoutClicked}/>:<HandlingMonth logout={props.isLogoutClicked} setLogout={props.setIsLogoutClicked} setIsCurrMonthDataAdded={setIsCurrMonthDataAdded}/>
     }
     if(isNewUserClicked) {
         return <SignUpPage setIsNewUserClicked={setIsNewUserClicked}/>

@@ -46,4 +46,50 @@ public class SignUpServiceImpl implements SignUpService {
 		
 		return signuprepo.existsByEmail(email);
 	}
+	
+	public Boolean isPassMatching(String Pass1, String Pass2) {
+		return passwordEncoder.matches(Pass1, Pass2);
+	}
+
+	@Override
+	public Boolean isCredsCorrect(String Username, String Password) {
+		Boolean ans = false;
+		if(!signuprepo.existsByUsername(Username)) {
+			ans = false;
+		}
+		else {
+			SignupEntity signupEntity = signuprepo.findByUsername(Username);
+			String pass = signupEntity.getPassword();
+			if(isPassMatching(pass,Password)) {
+				ans = true;
+			}
+			
+		}
+		return true;
+	}
+
+
+	@Override
+	public String changePassword(String Username, String currentPassword, String newPassword) {
+	    SignupEntity signupEntity = signuprepo.findByUsername(Username);
+	    if (signupEntity == null) {
+	        return "User not found";
+	    }
+	    
+	    // Compare current password with the one stored in the database
+	    if (!passwordEncoder.matches(currentPassword, signupEntity.getPassword())) {
+	        return "Incorrect current password";
+	    }
+	    
+	    // Check if the new password is the same as the current one
+	    if (passwordEncoder.matches(newPassword, signupEntity.getPassword())) {
+	        return "Current Password and New Password are the same";
+	    }
+
+	    // Encode and set the new password
+	    signupEntity.setPassword(passwordEncoder.encode(newPassword));
+	    signuprepo.save(signupEntity);
+	    return "Password Changed Successfully";
+	}
+
 }
