@@ -43,6 +43,31 @@ function ChangePasswordPage(props) {
         });
     }
 
+    const checkSecondValidation = (pass) => {
+        const specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?'; // Special symbols
+        const low = pass.split('').filter((char) => char >= 'a' && char <= 'z');
+        const high = pass.split('').filter((char) => char >= 'a' && char <= 'z');
+        const digit = pass.split('').filter((char) => char >= 'a' && char <= 'z');
+        const special = pass.split('').filter((char) => specialChars.split('').includes(char));
+        if (low && high && digit && special) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    const checkPassValidations = (pass) => {
+
+        if (pass.length < 8 || pass.length > 15) {
+            return false;
+        }
+        else if (!checkSecondValidation(pass)) {
+            return false;
+        }
+        return true;
+    }
+
     const handleIconClickingCurrent = () => {
         setIsIconClickedCurrent(!isIconClickedCurrent);
     }
@@ -72,8 +97,16 @@ function ChangePasswordPage(props) {
                 newPassword:newPass.trim()
 
             };
+
+            if(!checkPassValidations(newPass.trim())) {
+                swal("Error","Password is not having all the validations.","error");
+                return;
+            }
             try{
-                const response = await axios.post("http://localhost:9090/api-signup/signup/changePassword",passChangeData);
+                const response = await axios.post("http://localhost:9090/api-signup/signup/changePassword", passChangeData);
+                if(response.status == 200) {
+                    swal("Success","Password Changed","success");
+                }
                 return response.data;
             }
             catch(error) {
@@ -101,7 +134,7 @@ function ChangePasswordPage(props) {
                         <Form.Control
                             className="input-field"
                             type="text"
-                            //disabled={true}
+                            placeholder="Enter Username"
                             value={userName}
                             onChange={handleUsername}
                            
@@ -132,7 +165,7 @@ function ChangePasswordPage(props) {
                             <Form.Control
                                 className="input-field password-input"
                                 type={!isIconClickedNew ? "password" : "text"}
-                                placeholder="Enter Current Password"
+                                placeholder="Enter New Password"
                                 value={newPass}
                                 onChange={handleNewPassword}
                             />
