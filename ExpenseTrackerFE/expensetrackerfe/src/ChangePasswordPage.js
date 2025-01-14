@@ -98,8 +98,12 @@ function ChangePasswordPage(props) {
 
             };
 
-            if(!checkPassValidations(newPass.trim())) {
-                swal("Error","Password is not having all the validations.","error");
+            if (!checkPassValidations(newPass.trim())) {
+                swal("Error", "Password is not having all the validations.", "error");
+                return;
+            }
+            if (currentPass.trim() === newPass.trim()) {
+                swal("Error", "Both passwords are same", "error");
                 return;
             }
             try{
