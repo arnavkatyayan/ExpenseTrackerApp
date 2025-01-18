@@ -45,7 +45,7 @@ function App() {
       <LoginPage isLogoutClicked={isLogoutClicked} setIsLogoutClicked={setIsLogoutClicked} isChangePassClicked={isChangePassClicked} setIsChangePassClicked={setIsChangePassClicked} />
       {/* <ChangePasswordPage/> */}
       <footer className='footer'>
-        <p>2025.1.2</p>
+        <p>2025.1.3</p>
       </footer>
     </div>
   );
