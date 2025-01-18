@@ -9,7 +9,7 @@ import jakarta.mail.MessagingException;
 
 public interface ExpenseTrackerService {
 	ExpenseTrackerEntity saveExpense(ExpenseTrackerRequest expenseTrackerRequest);
-	List<ExpenseTrackerEntity> getAllExpenses();
+	List<ExpenseTrackerEntity> getAllExpenses(String userName);
 	Boolean isTableEmpty();
 	Long getFinalSalary(String monthName);
 	void handleTransfer(Boolean saveToPC, Boolean sendToMail) throws MessagingException;

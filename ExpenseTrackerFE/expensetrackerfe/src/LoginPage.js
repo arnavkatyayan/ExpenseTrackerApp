@@ -40,8 +40,9 @@ function LoginPage(props) {
         const month = getCurrentMonth();
         const response = await axios.get(`http://localhost:9090/api-login/isMonthAdded/${month}`);
         if(response.data) {
-            console.log(response.data);
             setIsCurrMonthDataAdded(true);
+            return response.data;
+
         } 
         
     }

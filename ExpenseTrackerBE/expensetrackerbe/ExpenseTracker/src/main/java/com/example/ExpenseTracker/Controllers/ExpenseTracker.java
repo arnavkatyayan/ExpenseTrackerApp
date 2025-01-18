@@ -61,9 +61,9 @@ public class ExpenseTracker {
     }
 
     @GetMapping("/getExpenses")
-    public ResponseEntity<List<ExpenseTrackerEntity>> getAllExpenses() {
+    public ResponseEntity<List<ExpenseTrackerEntity>> getAllExpenses(@RequestParam String userName) {
         try {
-            List<ExpenseTrackerEntity> expenses = expenseTrackerService.getAllExpenses();
+            List<ExpenseTrackerEntity> expenses = expenseTrackerService.getAllExpenses(userName);
             return ResponseEntity.ok(expenses);
         } catch (Exception e) {
             logger.error("Error fetching expenses", e);

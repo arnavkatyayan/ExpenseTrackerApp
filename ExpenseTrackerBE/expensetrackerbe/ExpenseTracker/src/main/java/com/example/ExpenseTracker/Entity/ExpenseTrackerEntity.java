@@ -28,6 +28,9 @@ public class ExpenseTrackerEntity {
 
     @Column(name = "monthname")
     private String monthName;
+    
+    @Column(name = "username")
+    private String expenseUser;
 
     @Column(name = "expensedate", nullable = false) // Assuming you want this to be mandatory
     private Timestamp expenseDate;
@@ -81,4 +84,16 @@ public class ExpenseTrackerEntity {
     public void setExpenseDate(Timestamp expenseDate) {
         this.expenseDate = expenseDate;
     }
+
+	public String getExpenseUser() {
+		return expenseUser;
+	}
+
+	public void setExpenseUser(String expenseUser) {
+		this.expenseUser = expenseUser;
+	}
+
+	
+    
+    
 }

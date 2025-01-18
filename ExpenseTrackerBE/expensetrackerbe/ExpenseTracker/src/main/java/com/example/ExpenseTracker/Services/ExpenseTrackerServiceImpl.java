@@ -47,12 +47,13 @@ public class ExpenseTrackerServiceImpl implements ExpenseTrackerService {
         expense.setMonthName(expenseTrackerRequest.getMonthName());
         expense.setExpenseId(expenseTrackerRequest.getExpenseId());
         expense.setExpenseDate(expenseTrackerRequest.getExpenseDate());
+        expense.setExpenseUser(expenseTrackerRequest.getExpenseUser());
         return expenseTrackerRepo.save(expense);
     }
 
     @Override
-    public List<ExpenseTrackerEntity> getAllExpenses() {
-        return expenseTrackerRepo.findAll();
+    public List<ExpenseTrackerEntity> getAllExpenses(String userName) {
+       return expenseTrackerRepo.findAllByExpenseUser(userName);
     }
 
     @Override

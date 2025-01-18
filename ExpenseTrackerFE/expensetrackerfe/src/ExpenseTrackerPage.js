@@ -179,7 +179,9 @@ function ExpenseTrackerPage(props) {
 
     const fetchExpenseList = async () => {
         try {
-            const response = await axios.get("http://localhost:9090/api-expenseTracker/getExpenses");
+            const response = await axios.get("http://localhost:9090/api-expenseTracker/getExpenses", {
+                params: { userName: props.userName }
+            });
             const expenseData = response.data.map(item => ({
                 name: item.expenseName,
                 amount: parseFloat(item.expenseAmount),
@@ -236,6 +238,7 @@ function ExpenseTrackerPage(props) {
         if (!hasError && !isEditable) {
             const expenseTrackerData = {
                 expenseName: expenseName,
+                expenseUser: props.userName,
                 expenseAmount: Number(expenseAmount),
                 monthName: getMonthName(),
                 expenseId: editableIndex,

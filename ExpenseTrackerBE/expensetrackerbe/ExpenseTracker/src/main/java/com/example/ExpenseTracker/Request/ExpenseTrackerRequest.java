@@ -8,7 +8,15 @@ public class ExpenseTrackerRequest {
 	private String monthName;
 	private int expenseAmount;
 	private Timestamp expenseDate;
+	private String expenseUser;
 	
+	
+	public String getExpenseUser() {
+		return expenseUser;
+	}
+	public void setExpenseUser(String expenseUser) {
+		this.expenseUser = expenseUser;
+	}
 	public int getExpenseId() {
 		return expenseId;
 	}
