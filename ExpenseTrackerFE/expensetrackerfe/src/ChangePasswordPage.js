@@ -14,6 +14,10 @@ function ChangePasswordPage(props) {
     const [currentPass, setCurrentPass] = useState("");
     const [newPass, setNewPass] = useState("");
     const [userName, setUserName] = useState("");
+    const [errUsername, setErrUsername] = useState(false);
+    const [errCurrentPass, setErrCurrentPass] = useState(false);
+    const [errNewPass, setErrNewPass] = useState(false);
+
 
     const handleUsername = (evt)=> {
         setUserName(evt.target.value);
@@ -27,6 +31,9 @@ function ChangePasswordPage(props) {
         setNewPass("");
         setIsIconClickedCurrent(false);
         setIsIconClickedNew(false);
+        setErrNewPass(false);
+        setErrCurrentPass(false);
+        setErrUsername(false);
     }
 
     const showPassValidations = () => {
@@ -89,6 +96,22 @@ function ChangePasswordPage(props) {
     
     const handleSubmit = async (event) => {
         event.preventDefault();
+        let count = 0;
+        if (userName.trim().length === 0) {
+            setErrUsername(true);
+            count++;
+        }
+        if (currentPass.trim().length === 0) {
+            setErrCurrentPass(true);
+            count++;
+        }
+        if (newPass.trim().length === 0) {
+            setErrNewPass(true);
+            count++;
+        }
+        if(count>0) {
+            return;
+        }
         const check = await checkCredentials();
         if (check) {
             const passChangeData = {
@@ -143,6 +166,8 @@ function ChangePasswordPage(props) {
                             onChange={handleUsername}
                            
                         />
+                        {errUsername ? <p className="validation-warning">Please enter the username</p> : null}
+
                     </Form.Group>
                     <Form.Group className="mb-3 input-container" controlId="formBasicPassword">
                         <Form.Label className="labels">Current Password</Form.Label>
@@ -160,7 +185,7 @@ function ChangePasswordPage(props) {
                                 <img src={view} alt="view" className="password-icon" onClick={handleIconClickingCurrent} />
                             }
                         </div>
-                        {/* {errPassword ? <p className="validation-warning">Please enter the password</p> : null} */}
+                        {errCurrentPass ? <p className="validation-warning">Please enter the current password</p> : null}
                     </Form.Group>
 
                     <Form.Group className="mb-3 input-container" controlId="formBasicPassword">
@@ -179,7 +204,7 @@ function ChangePasswordPage(props) {
                                 <img src={view} alt="view" className="password-icon" onClick={handleIconClickingNew} />
                             }
                         </div>
-                        {/* {errPassword ? <p className="validation-warning">Please enter the password</p> : null} */}
+                        {errNewPass ? <p className="validation-warning">Please enter the new password</p> : null}
                     </Form.Group>
 
                     <div className="btn-grps">
