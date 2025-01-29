@@ -1,7 +1,9 @@
 package com.example.ExpenseTracker.Services;
 
 import com.example.ExpenseTracker.Entity.HandlingMonthEntity;
+import com.example.ExpenseTracker.Entity.RecurrenceTrackerEntity;
 import com.example.ExpenseTracker.Repository.HandlingMonthRepo;
+import com.example.ExpenseTracker.Repository.RecurrenceTrackerRepo;
 import com.example.ExpenseTracker.Request.HandleMonthRequest;
 import java.security.Timestamp;
 import java.util.List;
@@ -17,12 +19,15 @@ public class HandleMonthServiceImpl implements HandleMonthService {
     @Autowired
     HandlingMonthRepo handlingmonthrepo;
     
+    @Autowired
+    RecurrenceTrackerRepo recurrencetrackerrepo;
+    
 	@Override
 	public HandlingMonthEntity saveMonth(HandleMonthRequest handlingMonthRequest) {
 		
 		
 		HandlingMonthEntity monthEntity = new HandlingMonthEntity();
-        monthEntity.setAmount(handlingMonthRequest.getAmount());
+        monthEntity.setAmount(getRecurrenceData(handlingMonthRequest.getUserName(),handlingMonthRequest.getAmount()));
         monthEntity.setEndDate(handlingMonthRequest.getEndDate());
         monthEntity.setStartDate(handlingMonthRequest.getStartDate());
         monthEntity.setMonthName(handlingMonthRequest.getMonthName());
@@ -41,6 +46,19 @@ public class HandleMonthServiceImpl implements HandleMonthService {
 			}
 		}
 		return ans;
+	}
+	
+	public int getRecurrenceData(String userName, int currentSal) {
+		int recurrenceAmount = 0;
+		if(!recurrencetrackerrepo.existsByUserName(userName)) {
+			return currentSal;
+		}
+		List<RecurrenceTrackerEntity> amount = recurrencetrackerrepo.findByUserName(userName);
+		for(RecurrenceTrackerEntity entity:amount) {
+			recurrenceAmount = recurrenceAmount+entity.getRecurrenceAmount();
+		}
+		return currentSal-recurrenceAmount;
+		
 	}
 
 }

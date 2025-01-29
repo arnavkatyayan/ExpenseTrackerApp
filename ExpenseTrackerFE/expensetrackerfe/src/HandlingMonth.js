@@ -58,12 +58,12 @@ function HandlingMonth(props) {
             setErrAmount(true);
             return;
         }
-        console.log(startDate);
         const handlingMonthData = {
             monthName: monthName,
             startDate: startDate,
             endDate: endDate,
-            amount: amount
+            amount: amount,
+            userName: props.userName
         }
         axios.post("http://localhost:9090/api-handling-month/handling-month", handlingMonthData).then(
             response => {

@@ -8,6 +8,7 @@ public class HandleMonthRequest {
 	private Timestamp startDate;
 	private Timestamp endDate;
 	private String monthName;
+	private String userName;
 	
 	public int getAmount() {
 		return amount;
@@ -33,4 +34,11 @@ public class HandleMonthRequest {
 	public void setMonthName(String monthName) {
 		this.monthName = monthName;
 	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	
 }

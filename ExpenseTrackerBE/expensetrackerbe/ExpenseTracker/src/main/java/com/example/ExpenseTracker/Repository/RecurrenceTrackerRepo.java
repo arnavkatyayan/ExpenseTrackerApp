@@ -8,4 +8,5 @@ import com.example.ExpenseTracker.Entity.RecurrenceTrackerEntity;
 
 public interface RecurrenceTrackerRepo extends JpaRepository<RecurrenceTrackerEntity, Long> {
 	List<RecurrenceTrackerEntity> findByUserName(String userName);
+	boolean existsByUserName(String userName);
 }

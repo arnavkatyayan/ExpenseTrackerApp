@@ -18,16 +18,7 @@ public class RecurrenceTrackerServiceImpl implements RecurrenceTrackerService {
 	@Autowired
 	RecurrenceTrackerRepo recurrenceTrackerRepo;
 	
-//	@Override
-//	public int getRecurrenceAmount(String userName) {
-//		int sum = 0;
-//		List<RecurrenceTrackerEntity> entity = recurrenceTrackerRepo.findByUserName(userName);
-//		for(RecurrenceTrackerEntity i:entity) {
-//			sum = sum+i.getRecurrenceAmount();
-//		}
-//		return sum;
-//	}
-	
+
 	@Override
 	public Map<String, Integer> getRecurrenceDetails(String userName) {
 		Map<String, Integer> m1 = new HashMap<>();
