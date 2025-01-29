@@ -323,3 +323,8 @@
   margin-top: 0px;
   margin-left: 15px;
 }
+.info-icon {
+  height: 21px;
+  width: 19px;
+  cursor: pointer;
+}

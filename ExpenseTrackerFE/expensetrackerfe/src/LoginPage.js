@@ -11,6 +11,7 @@ import swal from "sweetalert";
 import ExpenseTrackerPage from "./ExpenseTrackerPage";
 import ForgetPasswordPage from "./ForgetPasswordPage";
 import ChangePasswordPage from "./ChangePasswordPage";
+import RecurringExpensePage from "./RecurringExpensePage";
 
 function LoginPage(props) {
 
@@ -161,6 +162,10 @@ function LoginPage(props) {
 
     if(props.isChangePassClicked) {
         return <ChangePasswordPage userName={userName}/>
+    }
+
+    if(props.isRecurringExpenseClicked) {
+        return <RecurringExpensePage userName={userName}/>
     }
 
     if(isLoggedIn && props.isLogoutClicked === true) {

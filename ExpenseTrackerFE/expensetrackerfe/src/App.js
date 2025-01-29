@@ -7,12 +7,18 @@ function App() {
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState("");
   const [isChangePassClicked, setIsChangePassClicked] = useState(false);
+  const [isRecurringExpenseClicked, setIsRecurringExpenseClicked] = useState(false);
+  
   const handleLogout = () => {
     setIsLogoutClicked(!isLogoutClicked);
   }
 
   const handleChangePass = () => {
     setIsChangePassClicked(!isChangePassClicked);
+  }
+
+  const handleRecurringExpense = () => {
+    setIsRecurringExpenseClicked(!isRecurringExpenseClicked);
   }
 
   useEffect(() => {
@@ -39,10 +45,11 @@ function App() {
             <p className="date-time">{currentDateTime}</p>
             {/* {isChangePassClicked ? <Button variant="danger" type="button" className='logout-btn' onClick={handleChangePass}>Change Password</Button>:null} */}
             <Button variant="danger" type="button" className='logout-btn' onClick={handleChangePass}>{!isChangePassClicked ? "Change Password" : "Go Back"}</Button>
+            <Button variant="danger" type="button" className='logout-btn' onClick={handleRecurringExpense}>Recurring Expense</Button>
             {isLogoutClicked ? <Button variant="danger" type="button" className='logout-btn' onClick={handleLogout}>Logout</Button> : null}
       </div>
 
-      <LoginPage isLogoutClicked={isLogoutClicked} setIsLogoutClicked={setIsLogoutClicked} isChangePassClicked={isChangePassClicked} setIsChangePassClicked={setIsChangePassClicked} />
+      <LoginPage isLogoutClicked={isLogoutClicked} setIsLogoutClicked={setIsLogoutClicked} isChangePassClicked={isChangePassClicked} setIsChangePassClicked={setIsChangePassClicked} isRecurringExpenseClicked={isRecurringExpenseClicked} setIsRecurringExpenseClicked={setIsRecurringExpenseClicked}/>
       {/* <ChangePasswordPage/> */}
       <footer className='footer'>
         <p>2025.1.3</p>
