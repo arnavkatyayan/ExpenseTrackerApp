@@ -45,7 +45,7 @@ function App() {
             <p className="date-time">{currentDateTime}</p>
             {/* {isChangePassClicked ? <Button variant="danger" type="button" className='logout-btn' onClick={handleChangePass}>Change Password</Button>:null} */}
             <Button variant="danger" type="button" className='logout-btn' onClick={handleChangePass}>{!isChangePassClicked ? "Change Password" : "Go Back"}</Button>
-            <Button variant="danger" type="button" className='logout-btn' onClick={handleRecurringExpense}>Recurring Expense</Button>
+            {isLogoutClicked ? <Button variant="danger" type="button" className='logout-btn' onClick={handleRecurringExpense}>Recurring Expense</Button> : null}
             {isLogoutClicked ? <Button variant="danger" type="button" className='logout-btn' onClick={handleLogout}>Logout</Button> : null}
       </div>
 

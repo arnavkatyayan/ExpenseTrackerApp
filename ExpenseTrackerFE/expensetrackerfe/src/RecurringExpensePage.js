@@ -97,7 +97,7 @@ function RecurringExpensePage(props) {
                             className="input-field"
                             type="text"
                             value={props.userName}
-                            disabled
+                            disabled={true}
                         />
                     </Form.Group>
 
