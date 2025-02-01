@@ -36,4 +36,12 @@ public class HandlingMonth {
 		Long ans = (long)(salary);
 		return ResponseEntity.ok(ans);
 	}
+	
+	@GetMapping("/getRecurrenceAmount/{userName}")
+	public ResponseEntity<Integer> getRecurrenceAmount(@PathVariable String userName) {
+		int amount = handlemonthservice.getRecurrenceAmount(userName);
+		return ResponseEntity.ok(amount);
+	}
+
+
 }

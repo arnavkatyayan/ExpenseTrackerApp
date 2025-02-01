@@ -12,7 +12,7 @@ function HandlingMonth(props) {
     const [errAmount, setErrAmount] = useState(false);
     const [startDate, setStartDate] = useState(0);
     const [endDate, setEndDate] = useState(0);
-
+    const [recurrenceAmt, setRecurrenceAmt] = useState(-2);
     const handleAmount = (evt) => {
         setAmount(evt.target.value);
     }
@@ -76,10 +76,16 @@ function HandlingMonth(props) {
         
     }
 
+    const getRecurrenceAmt = async ()=> {
+        const response = await axios.get(`http://localhost:9090/api-handling-month/getRecurrenceAmount/${props.userName}`);
+        setRecurrenceAmt(response.data);
+    }
+
     useEffect(() => {
         getMonthName();
         getStartDate();
         getParameters();
+        getRecurrenceAmt();
     }, [])
 
 
@@ -111,7 +117,8 @@ function HandlingMonth(props) {
                         {errAmount ? <p className="validation-warning">Amount can't be 0</p> : null}
 
                     </Form.Group>
-
+                    {recurrenceAmt !== -1 ?  
+                    <h5>You have Rs: {recurrenceAmt} as recurring charges </h5>:null }
                     <div className="btn-grps">
                         <Button variant="success" type="submit" onClick={handleSubmit}>
                             Submit

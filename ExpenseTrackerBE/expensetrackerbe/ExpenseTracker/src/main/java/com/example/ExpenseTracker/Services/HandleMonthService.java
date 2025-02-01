@@ -7,4 +7,5 @@ public interface HandleMonthService {
 
 	HandlingMonthEntity saveMonth(HandleMonthRequest handlingMonthRequest);
 	int getCurrentMonthSalary(String month);
+	int getRecurrenceAmount(String userName);
 }

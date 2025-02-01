@@ -61,4 +61,18 @@ public class HandleMonthServiceImpl implements HandleMonthService {
 		
 	}
 
+	@Override
+	public int getRecurrenceAmount(String userName) {
+		int recurrenceAmount = 0;
+		if(!recurrencetrackerrepo.existsByUserName(userName)) {
+			return -1;
+		}
+		List<RecurrenceTrackerEntity> amount = recurrencetrackerrepo.findByUserName(userName);
+		for(RecurrenceTrackerEntity entity:amount) {
+			recurrenceAmount = recurrenceAmount+entity.getRecurrenceAmount();
+		}
+		return recurrenceAmount;
+		
+	}
+
 }
