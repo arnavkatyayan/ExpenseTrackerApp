@@ -144,7 +144,6 @@ function ExpenseTrackerPage(props) {
     const handleDelete = async (index) => {
         try {
             if (expenseList.length > 0 && index >= 0 && index < expenseList.length) {
-                console.log(expenseList[index]);
                 const expenseId = expenseList[index].expenseId;
                 setDifference((prevState) => prevState + expenseList[index].amount);
                 // Perform the delete request
@@ -241,7 +240,7 @@ function ExpenseTrackerPage(props) {
                 expenseUser: props.userName,
                 expenseAmount: Number(expenseAmount),
                 monthName: getMonthName(),
-                expenseId: editableIndex,
+                expenseId: expenseList.length ? expenseList.length + 1 : 1,
                 expenseDate: getCurrentDateInTS()
             };
             axios.post("http://localhost:9090/api-expenseTracker/saveExpense", expenseTrackerData)
