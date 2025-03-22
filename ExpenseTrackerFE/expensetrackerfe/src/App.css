@@ -153,8 +153,8 @@
 }
 
 .signup-page {
-  height: 80vh;
-  width: 50vw;
+  height: 65vh;
+  width: 37vw;
 }
 
 /* Responsive */
@@ -169,7 +169,7 @@
   }
 }
 .sign-up-inputs {
-  margin-top: -30px;
+  margin-top: 11vh;
   height: 75vh;
 }
 /* Ensure SweetAlert container is centered */
@@ -326,6 +326,7 @@
   position: relative; /* Or fixed if you want it to stay at the bottom of the viewport */
   width: 100%;
   bottom: 0;
+  font-weight: bold;
 }
 .logout-btn {
   margin-top: 0px;
