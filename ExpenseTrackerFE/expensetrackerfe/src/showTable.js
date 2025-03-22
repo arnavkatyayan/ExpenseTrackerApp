@@ -91,7 +91,7 @@ function ShowTable(props) {
                                     <Form.Check
                                         type="checkbox"
                                         label="Save To PC"
-                                        className="input-field"
+                                        className="input-field cursor-pointer"
                                         onChange={handleSaveToPC}
                                         checked={saveToPc}
                                     />
@@ -102,7 +102,7 @@ function ShowTable(props) {
                                     <Form.Check
                                         type="checkbox"
                                         label="Send To Email"
-                                        className="input-field"
+                                        className="input-field cursor-pointer"
                                         onChange={handleSendToMail}
                                         checked={sendToMail}
                                     />

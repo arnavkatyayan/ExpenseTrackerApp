@@ -336,3 +336,6 @@
   width: 19px;
   cursor: pointer;
 }
+.cursor-pointer {
+  cursor: pointer;
+}
